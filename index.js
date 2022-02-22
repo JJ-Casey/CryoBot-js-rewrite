@@ -8,8 +8,8 @@ const { stripIndents } = require('common-tags');
 const bot = new Bot();
 
 // Debugging
-//bot.on('raw', console.log);
-//bot.on('debug', m => console.log(`${chalk.cyan('[Debug]')} - ${m}`));
+// bot.on('raw', console.log);
+// bot.on('debug', m => console.log(`${chalk.cyan('[Debug]')} - ${m}`));
 bot.on('rateLimit', rl => console.warn(
     stripIndents`${chalk.yellow('[Ratelimit]')}
     Timeout: ${rl.timeout}
