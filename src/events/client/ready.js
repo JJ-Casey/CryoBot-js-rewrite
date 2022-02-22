@@ -1,4 +1,6 @@
 const Bot = require('../../../Bot');
+const { MessageEmbed } = require('discord.js');
+const colors = require('../../../colors.json');
 const chalk = require('chalk');
 
 /**
