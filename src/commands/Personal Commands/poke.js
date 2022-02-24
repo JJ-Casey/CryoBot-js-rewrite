@@ -6,7 +6,7 @@ const nami_id = "270944077820854273"
 
 module.exports = { 
     name: 'poke',
-    usage: 'poke [user]',
+    usage: 'poke (user)',
     description: 'Pokes someone',
     
     /** 
@@ -22,7 +22,7 @@ module.exports = {
         desc =''
         if (message.author.id == nami_id){
             if (target != null){
-                if (memb.id == 270944077820854273){
+                if (memb.id == nami_id){
                     desc = `${message.author} hurt themselves in confusion!`;
                 }else{
                     desc = `${message.author} climbs out of their pond to poke {memb.mention}`;

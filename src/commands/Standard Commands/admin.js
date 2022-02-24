@@ -1,5 +1,6 @@
 const { Message, MessageEmbed } = require('discord.js');
 const Bot = require('../../../Bot');
+const { Random } = require("random-js");
 const colors = require('../../../colors.json');
 
 choices = ['🙌 JJ is best admin 🙌', '🙌 Cat is best admin 🙌']
@@ -15,7 +16,7 @@ module.exports = {
      */
     run: async (bot, message) => {
         const embed = new MessageEmbed({title:'Best Admin'}).setColor(colors.DefaultEmbed);
-        embed.setDescription(`${choices[Math.floor(Math.random() * choices.length)]}`)
+        embed.setDescription(`${new Random().pick(choices)}`)
         return message.channel.send({embeds:[embed]});
     }
 };

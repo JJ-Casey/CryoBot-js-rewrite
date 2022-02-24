@@ -1,6 +1,6 @@
 const { Message, MessageEmbed } = require('discord.js');
-const Bot = require('../../../Bot');
-const colors = require('../../../colors.json');
+const Bot = require('../../Bot');
+const colors = require('../../colors.json');
 
 module.exports = { 
     name: 'name',
