@@ -1,15 +1,18 @@
-const { Message, MessageEmbed } = require('discord.js');
+const { Message } = require('discord.js');
 const Bot = require('../../../Bot');
 const { readdirSync } = require('fs');
 const { prefix } = require('../../../config.json');
-const colors = require('../../../colors.json');
-
+const colors = require('../../utils/colors.js');
+const utils = require('../../utils/discordUtils.js')
 
 module.exports = { 
     name: 'help',
     aliases: ['commands'],
     usage: 'help (command)',
+    hidden: false,
+    permissions: [],
     description: 'Shows list of commands',
+    category: 'Utilities',
     
     /** 
      * @param {Bot} bot 
@@ -26,21 +29,23 @@ module.exports = {
 };
 
 function getAll(bot, message) {
-    const embed = new MessageEmbed()
+    const embed = utils.getDefaultMessageEmbed(bot)
         .setColor(colors.Orange)
-        .setFooter('Syntax: () = optional, [] = required, {a, b} = choose between a or b');
+        .setFooter({ text: 'Syntax: () = optional, [] = required, {a, b} = choose between a or b', iconURL: bot.user.displayAvatarURL({ dynamic: true}) });
     
     /* bot.categories is an array
     Basically, this reads recursively each directory from src/commands
     Then, for each category, it adds a field to the embed with the name and its commands */
+    let ignored_categories = [ 'Configuration & Management' , 'Community Commands', 'Personal Commands', 'Super Secret Owner Commands' ]
     bot.categories.forEach(category => {
+        if (ignored_categories.includes(category)) { return; }
         let filesArr = readdirSync(`./src/commands/${category}`)
             .filter(file => file.endsWith('.js')); // Accepts only .js files 
  
         embed.addField(category, 
             filesArr
                 .map(file => file.substring(0, file.length - 3)) // Removes the .js
-                .filter(cmd => !bot.commands.get(cmd).hidden) // Removes the ones with a hidden property
+                .filter(cmd => {return !bot.commands.get(cmd).hidden }) // Removes the ones with a hidden property
                 .map(str => `\`${str}\``) // Formats the names to include monospace
                 .join(' ')); // Joints them by spaces instead of newlines
 
@@ -51,9 +56,9 @@ function getAll(bot, message) {
 }
 
 function getCmd(bot, message, input) {
-    const embed = new MessageEmbed()
+    const embed = utils.getDefaultMessageEmbed(bot)
         .setColor(colors.SteelBlue)
-        .setFooter('Syntax: () = optional; [] = required; {a, b} = choose between a or b');
+        .setFooter({ text: 'Syntax: () = optional; [] = required; {a, b} = choose between a or b', iconURL: bot.user.displayAvatarURL({ dynamic: true }) });
 
     // Fetching the command data through bot.commands or bot.aliases
     const cmd = bot.commands.get(input.toLowerCase()) || bot.commands.get(bot.aliases.get(input.toLowerCase()));

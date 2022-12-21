@@ -1,12 +1,15 @@
-const { Message, MessageEmbed, GuildMember } = require('discord.js');
+const { Message, GuildMember } = require('discord.js');
 const Bot = require('../../../Bot');
-const colors = require('../../../colors.json');
+const colors = require('../../utils/colors.js');
 const utils = require('../../utils/discordUtils.js')
 
-module.exports = {  
+module.exports = { 
     name: 'ignite',
     usage: 'ignite [member]',
+    hidden: false,
+    permissions: [],
     description: 'Displays when a member joined',
+    category: 'League Commands',
     
     /** 
      * @param {Bot} bot 
@@ -14,11 +17,28 @@ module.exports = {
      * @param {GuildMember} target
      */
     run: async (bot, message, args) => {
-        target = utils.resolveMember(message.guild, args[0]);
-        if (target == null) {
-            return message.channel.send(`${message.member.displayName} ignites themself in confusion!`);
-        }
+        user = message.mentions.users.first();
 
-        return message.channel.send(`${message.member.displayName} ignites ${target.displayName}`);
+        user = user || args[0]
+
+        if (user === undefined) { return message.channel.send(`${message.member.displayName} ignites themself in confusion!`); }
+
+        message.guild.members.fetch(user)
+            .then(memb => {
+                if (memb === undefined) {
+                    message.guild.members.fetch(args[0])
+                        .then(memb => {
+                            if (memb === undefined) {
+                                return message.channel.send(`${message.member.displayName} ignites themself in confusion!`);
+                            } else {
+                                message.channel.send(`${message.member.displayName} ignites ${memb.displayName}`);
+                            }
+                        });
+                } else {
+                    message.channel.send(`${message.member.displayName} ignites ${memb.displayName}`);
+                }}).catch(() => {
+
+                    message.channel.send(`${message.member.displayName} ignites themself in confusion!`);
+            });
     }
 };

@@ -2,6 +2,7 @@
 const Bot = require('./Bot');
 require('dotenv').config({ path: './.env'});
 const chalk = require('chalk');
+const { readdirSync } = require('fs');
 const { stripIndents } = require('common-tags');
 
 // Client
@@ -20,10 +21,13 @@ bot.on('error', e => console.error(`${chalk.redBright('[Error]')} - ${e.stack}`)
 process.on('uncaughtException', e => console.error(`${chalk.redBright('[Error]')} - ${e.stack}`));
 process.on('unhandledRejection', e => console.error(`${chalk.redBright('[Error]')} - ${e.stack}`));
 process.on('warning', e => console.warn(`${chalk.yellow('[Error]')} - ${e.stack}`));
-
+process.on('exit', () => { bot.database.end() });
+process.on('SIGINT', () => { bot.database.end() });
+process.on('SIGUSR1', () => { bot.database.end() });
+process.on('SIGUSR2', () => { bot.database.end() });
 
 // Handlers' modules
-['command', 'event'].forEach(handler => {
+readdirSync('./src/handlers').forEach(handler => {
     require(`./src/handlers/${handler}`)(bot);
 });
 

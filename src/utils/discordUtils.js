@@ -1,13 +1,13 @@
-const { Message, MessageEmbed, GuildMember } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const Bot = require('../../Bot');
-const colors = require('../../colors.json');
+const colors = require('../utils/colors.js');
 
 module.exports = {
     /** 
     * @param {Bot} bot
     */
     resolveMember(guild, memberIdentification) {
-        if (memberIdentification.length == 0) {
+        if (!memberIdentification | memberIdentification.length == 0) {
             return null;
         }
         // check for mention
@@ -22,9 +22,15 @@ module.exports = {
         return null;
     },
     getDefaultMessageEmbed(bot, embedParams = {}) {
-        return new MessageEmbed(embedParams)
+        embedParams = {
+            ...{
+                color: colors.DefaultEmbed
+            },
+            ...embedParams
+        };
+        return new EmbedBuilder(embedParams)
+        .setAuthor({ name: bot.user.username, iconURL: bot.user.displayAvatarURL({ dynamic: true}) })
         .setTimestamp()
-        .setColor(colors.DefaultEmbed)
-        .setFooter(bot.user.username, bot.user.displayAvatarURL({ dynamic: true}));
+        .setFooter({ text: bot.user.username, iconURL: bot.user.displayAvatarURL({ dynamic: true}) });
     }
 }

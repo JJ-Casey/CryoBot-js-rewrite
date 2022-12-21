@@ -1,16 +1,23 @@
-const { Message, MessageEmbed } = require('discord.js');
+const { ChatInputCommandInteraction, SlashCommandBuilder } = require('discord.js');
 const Bot = require('../../../Bot');
 
 module.exports = { 
     name: 'beep',
     usage: 'beep',
+    hidden: false,
+    permissions: [],
     description: 'Boop',
+    category: 'Standard Commands',
+
+    slash: new SlashCommandBuilder()
+        .setName('beep')
+        .setDescription('Replies with Boop!'),
     
     /** 
      * @param {Bot} bot 
-     * @param {Message} message 
+     * @param {ChatInputCommandInteraction} interaction 
      */
-    run: async (bot, message) => {
-        return message.channel.send('Boop')
+    run: async (bot, interaction) => {
+        interaction.reply('Boop');
     }
 };

@@ -1,5 +1,6 @@
 {
-    "DefaultEmbed": "0xff69b4",
+    "DefaultEmbed": "#FF69B4",
+
     "Red": "#FF0000",
     "FireBrick": "#B22222",
     "Pink": "#FFC0CB",
@@ -11,6 +12,7 @@
     "PaleBlue": "#293749",
     "SteelBlue": "#4682B4",
 
+    "Green": "#00FF00",
     "ForestGreen": "#228B22",
     "Lime": "#00FF00",
     "GreenYellow": "#ADFF2F",

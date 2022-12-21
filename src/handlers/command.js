@@ -15,15 +15,22 @@ function checkData(bot, command, fileName) {
         success = '✔   Loaded',  
         err =    '✖   Missing Data';
 
-    const { name, usage, description, run } = command;
+    const { name, usage, hidden, description, run, slash } = command;
     if (
         typeof name == 'string' &&
         typeof usage == 'string' &&
         typeof description == 'string' &&
-        typeof run == 'function'
+        typeof run == 'function' &&
+        typeof hidden == 'boolean'
     ) {
-        bot.commands.set(command.name.toLowerCase(), command);
+        if (slash) {
+            bot.slashCommands.set(command.name, command)
+        } else {
+            bot.commands.set(command.name, command);
+        }
         return table.addRow(fileName, success);
+    } else {
+        console.log(`Didn't load ${fileName}`)
     }
     return table.addRow(fileName, err);
 }
@@ -35,7 +42,7 @@ function checkData(bot, command, fileName) {
  */
 module.exports = bot => {
     readdirSync('./src/commands/').forEach(dir => {
-        const commands = readdirSync(`./src/commands/${dir}/`).filter(file => file.endsWith('.js'));
+        const commands = readdirSync(`./src/commands/${dir}/`).filter(file => file.endsWith('.js') && !file.startsWith('_'));
         for (let file of commands) {
             let pull = require(`../commands/${dir}/${file}`);
             checkData(bot, pull, file);
