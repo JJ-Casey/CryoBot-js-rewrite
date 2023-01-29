@@ -1,7 +1,7 @@
 const { ChatInputCommandInteraction, SlashCommandBuilder } = require('discord.js');
 const Bot = require('../../../Bot');
 const colors = require('../../utils/colors.js');
-const { Random } = require("random-js");
+const { Random, string } = require("random-js");
 const utils = require('../../utils/discordUtils.js')
 
 module.exports = { 
@@ -16,13 +16,13 @@ module.exports = {
         .setName('roll')
         .setDescription('Roll an M-sided die N times')
         .addIntegerOption(option =>
-            option.setName('n')
+            option.setName('num_dice')
                 .setDescription('The number of dice to roll')
                 .setMinValue(1)
                 .setMaxValue(100)
                 .setRequired(true))
         .addIntegerOption(option =>
-            option.setName('m')
+            option.setName('sides')
                 .setDescription('The number of sides the dice have')
                 .setMinValue(4)
                 .setMaxValue(100)
@@ -35,8 +35,18 @@ module.exports = {
     run: async (bot, interaction) => {
         const embed = utils.getDefaultMessageEmbed(bot, {title:'Roll Dice'});
 
-        embed.addFields({name: 'Result', value: new Random().dice(interaction.options.getInteger('m'), interaction.options.getInteger('n')).join(', ') });
+        let rolls = new Random().dice(interaction.options.getInteger('sides'), interaction.options.getInteger('num_dice'))
+        const sum = rolls.reduce((a,b) => { return a+b; });
+        const max = Math.max(...rolls);
+        const min = Math.min(...rolls);
 
-        interaction.reply({embeds:[embed]});
+        embed.addFields(
+            { name: 'Result', value: rolls.join(', ') },
+            { name: 'Sum', value: `${sum}` },
+            { name: 'Max', value: `${max}`, inline: true},
+            { name: 'Min', value: `${min}`, inline: true}
+        );
+
+        interaction.reply({ embeds: [embed] });
     }
 };

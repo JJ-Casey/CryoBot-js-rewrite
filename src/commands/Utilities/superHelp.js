@@ -57,7 +57,7 @@ function getAll(bot, message) {
 }
 
 function getCmd(bot, message, input) {
-    const embed = utils.getDefaultMessageEmbed(bot)
+    const embed = utils.getDefaultMessageEmbed()
         .setColor(colors.SteelBlue)
         .setFooter({ text: 'Syntax: () = optional; [] = required; {a, b} = choose between a or b', iconURL: bot.user.displayAvatarURL({ dynamic: true}) });
 

@@ -1,10 +1,31 @@
-const { ChatInputCommandInteraction, ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonStyle, SlashCommandBuilder } = require('discord.js');
-const mysql = require('mysql')
+const { ChatInputCommandInteraction, ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonStyle, SlashCommandBuilder, formatEmoji, hyperlink } = require('discord.js');
 const Bot = require('../../../Bot');
 const { ownerID } = require('../../../config.json');
 const colors = require('../../utils/colors.js');
 const perms = require('../../utils/perms.js');
 const utils = require('../../utils/discordUtils.js')
+
+async function createReactionEmbed(bot, group, serverId) {
+    return new Promise((resolve, reject) => {
+        const query = `SELECT rg.*, rr.* FROM reactionroles AS rr RIGHT JOIN reactiongroups AS rg ON rr.rGroupKEY = rg.rGroupKEY WHERE rg.serverId='${serverId}' AND rg.groupName= ? `;
+
+        bot.database.query(query, [ group ], function (err, results) {
+            if (err) { console.error(err.stack); reject(err); }
+
+            const description = results[0]['description'];
+
+            const embed = utils.getDefaultMessageEmbed(bot, { title: group, description: description});
+
+            results.forEach(row => {
+                embed.addFields({ name: row['reaction'], value: `<@&${row['roleId']}>`, inline: true});
+            });
+
+            let reactions = results.map(row => row['reaction']);
+
+            resolve([ embed, reactions ]);
+        });
+    });
+}
 
 module.exports = {
     name: 'rr',
@@ -17,18 +38,57 @@ module.exports = {
     slash: new SlashCommandBuilder()
         .setName('rr')
         .setDescription('Reaction role stuff')
-        .addSubcommand(subcommand =>
-            subcommand.setName('list')
-            .setDescription('View all the reaction role groups currently set up'))
-        .addSubcommand(subcommand =>
-            subcommand.setName('view')
-            .setDescription('View a particular reaction group'))
-        .addSubcommand(subcommand =>
-            subcommand.setName('create')
-            .setDescription('Create a new reaction role group'))
-        .addSubcommand(subcommand =>
-            subcommand.setName('remove')
-            .setDescription('Delete reaction role group')),
+        .addSubcommand(subcommand => subcommand.setName('view')
+                .setDescription('View information about all reaction groups'))
+        .addSubcommand(subcommand => subcommand.setName('create')
+                .setDescription('Create a new reaction role group'))
+        .addSubcommand(subcommand => subcommand.setName('remove')
+                .setDescription('Delete reaction role group'))
+        .addSubcommand(subcommand => subcommand.setName('addrole')
+                .setDescription('Add a role to a reaction group')
+                .addStringOption(option =>
+                    option.setName('group')
+                        .setDescription('The reaction role group to add the role to')
+                        .setRequired(true)
+                        .setAutocomplete(true))
+                .addMentionableOption(option =>
+                    option.setName('role')
+                        .setDescription('The role to add')
+                        .setRequired(true))
+                .addStringOption(option =>
+                    option.setName('reaction')
+                        .setDescription('The reaction used to get the role')
+                        .setRequired(true)))
+        .addSubcommand(subcommand => subcommand.setName('remrole')
+                .setDescription('Remove a role from a reaction group')
+                .addStringOption(option =>
+                    option.setName('group')
+                        .setDescription('The reaction role group to add the role to')
+                        .setRequired(true)
+                        .setAutocomplete(true)))
+        .addSubcommand(subcommand => subcommand.setName('sendmessage')
+                .setDescription('Send the reaction group message to the specified channel')
+                .addStringOption(option =>
+                    option.setName('group')
+                        .setDescription('The reaction role group to set the message of')
+                        .setRequired(true)
+                        .setAutocomplete(true))
+                .addChannelOption(option => 
+                    option.setName('channel')
+                        .setDescription('The channel to send the reaction message to')
+                        .setRequired(true)))
+        .addSubcommand(subcommand => subcommand.setName('setmessage')
+                .setDescription('Set the message to be used as the reaction group message')
+                .addStringOption(option =>
+                    option.setName('group')
+                        .setDescription('The reaction role group to set the message of')
+                        .setRequired(true)
+                        .setAutocomplete(true))
+                .addStringOption(option => 
+                    option.setName('message_link')
+                        .setDescription('The link of the message to be set as the reaction message')
+                        .setRequired(true))
+                ),
 
     /** 
      * @param {Bot} bot 
@@ -42,37 +102,7 @@ module.exports = {
         const embed = utils.getDefaultMessageEmbed(bot, { title:'Reaction Roles' });
 
         switch (interaction.options.getSubcommand()) {
-            case 'list':
-                {
-                    embed.setDescription('Here are all of the reaction groups you have set up!');
-                    interaction.reply({ embeds: [embed], fetchReply: true}).then(reply => {
-                        const query = `SELECT * FROM reactiongroups WHERE serverId=${interaction.guildId}`;
-                        bot.database.query(query, function (err, result) {
-                            if (err) {
-                                return interaction.reply({ embeds: [
-                                    utils.getDefaultMessageEmbed(bot, {title:'Error', color: colors.Red})
-                                        .setDescription(`${err}`)
-                                        .addField('Query', `Parsed query: ${query}`)
-                                    ] });
-                            }
-                    
-                            result.forEach(row => {
-                                let value = '';
-                                for (let key in row) {
-                                    if (key === 'groupName') {
-                                        continue;
-                                    } 
-                                    value += `**${key}**: ${row[key]}\n`;
-                                }
-                                embed.addFields({ name: row['groupName'], value: value });
-                            });
-                            interaction.editReply({ embeds: [ embed ] });
-                        });
-                    });
-                }
-            break;
             case 'view':
-                // view a specific reaction group
                 {
                     embed.setDescription('View Reaction Group information');
                     embed.addFields({name:'No group selected', value: 'Select a group to view information about it!'});
@@ -93,50 +123,16 @@ module.exports = {
                                 .setPlaceholder('Nothing selected');
                             
                             result.forEach(row => {
-                                selectMenu.addOptions({ label:row['groupName'], value: row['groupName'] })
+                                selectMenu.addOptions({ label: row['groupName'], value: row['groupName'] })
                             });
                             selectRow.addComponents(selectMenu);
                             
-                            const buttonRow = new ActionRowBuilder();
-                            const addRoleButton = new ButtonBuilder()
-                                .setCustomId('rrAddRole')
-                                .setName('Add Role')
-                                .setStyle(ButtonStyle.Success);
-                            const removeRoleButton = new ButtonBuilder()
-                                .setCustomId('rrRemoveRole')
-                                .setName('Remove Role')
-                                .setStyle(ButtonStyle.Danger);
-                            buttonRow.addComponents(addRoleButton, removeRoleButton)
-
                             interaction.editReply({ components: [ selectRow ] });
                         });
                     });
                 }
             break;
-            case 'fix':
-                interaction.reply('Fixing...');
-                bot.database.query(`DELETE FROM reactionroles WHERE groupName='948297226537553960'`);
-                bot.database.query(`SELECT * FROM reactiongroups`, function (err1, rGroups) {
-                    if (err1) { interaction.editReply({ embeds: [utils.getDefaultMessageEmbed(bot, { title: 'Error', color: colors.Red }).setDescription(`${err1}`)] }); }
-                    rGroups.forEach(rowGroup => {
-                        console.log(rowGroup);
-                        const groupName = rowGroup['groupName'];
-                        const messageId = rowGroup['messageId'];
-                        bot.database.query(`UPDATE reactionroles SET groupName='${groupName}' WHERE groupName='${messageId}'`, function (err1, rGroups) {
-                            if (err1) { interaction.editReply({ embeds: [utils.getDefaultMessageEmbed(bot, { title: 'Error', color: colors.Red }).setDescription(`${err1}`)] }); }
-                        });
-                    });
-                });
-            break;
-            // Some other command:
-            // Choose Role
-            // Choose Reacc
-            // Add More? (Yes, No, Finish)
-            // Choose Message, Send new message, finish
-            // If choose message: Give message id
-            // If send new message, which channel?
             case 'create':
-                // Add this to "/rr view"
                 const modal = new ModalBuilder()
                     .setCustomId('rrCreateReactionGroup')
                     .setTitle('Create Reaction Group');
@@ -192,45 +188,90 @@ module.exports = {
                     });
                 }
             break;
-        }
-
-        const subcommand = '';
-        switch (subcommand) {
-            case 'add':
-                const groupName = args.join(' ');
-                embed.setColor(colors.Orange).setDescription('Confirm group information');
-                embed.addField('Suggested group name', groupName);
-                const row = new ActionRowBuilder().addComponents(
-                    new ButtonBuilder()
-                        .setCustomId('rrCorrect')
-                        .setLabel('Correct')
-                        .setStyle(ButtonStyle.Success),
-                    new ButtonBuilder()
-                        .setCustomId('rrIncorrect')
-                        .setLabel('Incorrect')
-                        .setStyle(ButtonStyle.Secondary),
-                );
-                message.reply({ embeds: [ embed ], components: [ row ] });
-            break;
-            case 'remove':
-            case 'rem':
+            case 'addrole':
                 {
-                    const groupName = args.join(' ');
-                    embed.setColor(colors.Orange).setDescription('Confirm group removal');
-                    embed.addField('Group to be deleted', groupName);
-                    const row = new ActionRowBuilder().addComponents(
-                        new ButtonBuilder()
-                            .setCustomId('rrRemove')
-                            .setLabel('Remove')
-                            .setStyle(ButtonStyle.Danger),
-                        new ButtonBuilder()
-                            .setCustomId('rrKeep')
-                            .setLabel('Don\'t Remove')
-                            .setStyle(ButtonStyle.Secondary),
-                    );
-                    message.reply({ embeds: [ embed ], components: [ row ] });
+                    const groupName = interaction.options.getString('group');
+                    const role = interaction.options.getMentionable('role');
+                    const reaction = interaction.options.getString('reaction');
+
+                    embed.setTitle(groupName).setColor(colors.Orange);
+                    embed.addFields(
+                        { name:`Group`, value: `${groupName}` },
+                        { name:`Role`, value: `${role}`, inline:true},
+                        { name:`Reaction`, value: `${reaction}`, inline:true}
+                        );
+                    const row = new ActionRowBuilder()
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId('rrAcceptAddRole')
+                                .setLabel('Correct!')
+                                .setStyle(ButtonStyle.Success),
+                            new ButtonBuilder()
+                                .setCustomId('rrCancelAddRole')
+                                .setLabel('Nononononono!')
+                                .setStyle(ButtonStyle.Danger),
+                        );
+                    interaction.reply({ embeds: [embed], components: [row] });
                 }
             break;
-        }
+            case 'remrole':
+                {
+                    const groupName = interaction.options.getString('group');
+                    const role = interaction.options.getMentionable('role');
+                    const reaction = interaction.options.getString('reaction');
+                    embed.setTitle(groupName).setColor(colors.Orange);
+                    embed.addFields(
+                        { name:`Group`, value: `${groupName}` },
+                        { name:`Role`, value: `${role}`, inline:true},
+                        { name:`Reaction`, value: `${reaction}`, inline:true}
+                        );
+                    const row = new ActionRowBuilder()
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId('rrAcceptAddRole')
+                                .setLabel('Correct!')
+                                .setStyle(ButtonStyle.Success),
+                            new ButtonBuilder()
+                                .setCustomId('rrCancelAddRole')
+                                .setLabel('Nononononono!')
+                                .setStyle(ButtonStyle.Danger),
+                        );
+                    interaction.reply({ embeds: [embed], components: [row] });
+                }
+            break;
+            case 'sendmessage':
+                try {
+                    const groupName = interaction.options.getString('group');
+                    const channel = interaction.options.getChannel('channel');
+    
+                    const temp = await createReactionEmbed(bot, groupName, interaction.guildId);
+                    const reactionEmbed = temp[0];
+                    const reactions = temp[1];
+    
+                    if (reactionEmbed == null) {
+                        return;
+                    }
+                    const resp = utils.getDefaultMessageEmbed(bot, { title: "Reaction Message Sent" });
+    
+                    const message = await channel.send({ embeds: [ reactionEmbed ], fetchReply: true });
+    
+                    for (let reacc of reactions) {
+                        console.log(`emoji: ${reacc}`);
+                        await message.react(reacc);
+                        console.log('Printed emoji');
+                    }
+    
+                    const urlToMessage = hyperlink('Go to message', message.url);
+    
+                    resp.setDescription(`The message was sent to ${channel}.\n${urlToMessage}`);
+                    interaction.reply({ embeds: [ resp ] });
+                } catch (err) {
+                    console.error(err.stack)
+                }
+            break;
+            case 'setmessage':
+                interaction.reply(':)');
+            break;
+            }
     }
 };

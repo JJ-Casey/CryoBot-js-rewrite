@@ -35,7 +35,7 @@ module.exports = {
             }
 
             let embed = utils.getDefaultMessageEmbed(bot, {title:'Database Query'})
-                    .addField('Query', `Parsed query: ${query}`);
+                    .addFields('Query', `Parsed query: ${query}`);
 
             if (result.message) {
                 embed.addField('Message', `DB Message: ${result.message}`);

@@ -35,7 +35,7 @@ module.exports = {
 
         if (!bot.commands.has(commandName)) {
             if (!bot.slashCommands.has(commandName)) {
-                interaction.reply({ embeds : [ utils.getDefaultMessageEmbed(bot, { title: 'Error', color: colors.Red, description: `No such command called ${commandName}` })]})
+                interaction.reply({ embeds : [ utils.getDefaultMessageEmbed(bot, { title: 'Error', color: colors.Red, description: `No such command called ${commandName}` })], fetchReply: true})
                     .then(msg => setTimeout(() => msg.delete(), 5000));
                 return;
             }

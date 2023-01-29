@@ -11,21 +11,17 @@ module.exports = {
     description: 'Mods plz',
     category: 'Standard Commands',
 
-    slash: new SlashCommandBuilder()
-        .setName('mods')
-        .setDescription('Mods OMEGALUL'),
-    
     /** 
      * @param {Bot} bot 
      * @param {ChatInputCommandInteraction} interaction 
      */
-    run: async (bot, interaction) => {
+    run: async (bot, message) => {
         // return message.channel.send('bababooey');
-        // if (interaction.member.id == mitzy_id) {
-        //     if (message.content.slice(3) === 'Mods') {
-        //         return message.channel.send('Silly Mitzy. Learn how to type smh');
-        //     }
-        // }
-        return interaction.reply('M<:OMEGALUL:739145494890283089>DS');
+        if (interaction.member.id == mitzy_id) {
+            if (message.content.slice(3) === 'Mods') {
+                return message.reply('Silly Mitzy. Learn how to type smh');
+            }
+        }
+        return message.reply('M<:OMEGALUL:739145494890283089>DS');
     }
 };
