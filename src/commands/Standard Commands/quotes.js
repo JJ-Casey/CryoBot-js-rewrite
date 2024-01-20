@@ -1,18 +1,20 @@
 const { ChatInputCommandInteraction, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, bold } = require('discord.js');
 const Bot = require('../../../Bot');
-const util = require('util')
+const { Random } = require("random-js");
 const utils = require('../../utils/discordUtils.js');
+const PermissionError = require('../../utils/permissionError.js');
+const perms = require('../../utils/perms.js');
 
 const PAGE_SIZE = 10;
 
 function createMPE(results) {
     const jsonMPE = {};
     jsonMPE['num_quotes'] = results.length;
-    jsonMPE['largestPK'] = Math.max(...results.map(x=>x['quoteKEY']));
+    jsonMPE['largestPK'] = Math.max(...results.map(x => x['quoteKEY']));
     jsonMPE['num_pages'] = Math.floor(results.length / PAGE_SIZE) + 1
 
     for (let pageNo = 1; pageNo <= jsonMPE['num_pages']; pageNo++) {
-        const pageQuotes = results.filter((v,i) => ((pageNo - 1) * PAGE_SIZE <= i) & (i < pageNo * PAGE_SIZE));
+        const pageQuotes = results.filter((v, i) => ((pageNo - 1) * PAGE_SIZE <= i) & (i < pageNo * PAGE_SIZE));
         delete pageQuotes['quoteKEY'];
         const jsonString = JSON.stringify(pageQuotes);
         jsonMPE[`page_${pageNo}`] = JSON.parse(jsonString);
@@ -27,7 +29,7 @@ async function buildMPE(bot, serverId) {
             if (err) reject(err);
 
             const mpe = createMPE(results);
-    
+
             bot.database.query(`INSERT INTO quoteMPEs (mpe, serverId) VALUES ('${JSON.stringify(mpe)}', '${serverId}')`, function (err, results) {
                 if (err) reject(err.stack);
                 resolve(mpe);
@@ -42,7 +44,7 @@ async function rebuildMPE(bot, serverId) {
             if (err) reject(err);
 
             const mpe = createMPE(results);
-    
+
             bot.database.query(`UPDATE quoteMPEs mpe SET mpe='${JSON.stringify(mpe)}' WHERE serverId='${serverId}'`, function (err, results) {
                 if (err) reject(err.stack);
                 resolve(mpe);
@@ -62,7 +64,7 @@ async function validateMPE(bot, serverId, mpe) {
     });
 }
 
-module.exports = { 
+module.exports = {
     name: 'quotes',
     aliases: [],
     hidden: false,
@@ -70,21 +72,24 @@ module.exports = {
     usage: 'quotes',
     description: 'Display quotes from the server and stream',
     category: 'Standard Commands',
-    
+
     slash: new SlashCommandBuilder()
         .setName('quotes')
         .setDescription('Display quotes from the server and stream')
         .addSubcommand(subcommand =>
             subcommand.setName('view')
-            .setDescription('View all quotes from this server!'))
+                .setDescription('View all quotes from this server!'))
+        .addSubcommand(subcommand =>
+            subcommand.setName('random')
+                .setDescription('Receive a random quote!'))
         .addSubcommand(subcommand =>
             subcommand.setName('add')
-            .setDescription('Add a quote to the list!')
-            .addStringOption(option =>
-                option.setName('quote')
-                .setDescription('The quote to be added')
-                .setRequired(true))),
-    
+                .setDescription('Add a quote to the list!')
+                .addStringOption(option =>
+                    option.setName('quote')
+                        .setDescription('The quote to be added')
+                        .setRequired(true))),
+
     /** 
      * @param {Bot} bot 
      * @param {ChatInputCommandInteraction} interaction 
@@ -93,28 +98,28 @@ module.exports = {
         switch (interaction.options.getSubcommand()) {
             case 'view':
                 await interaction.deferReply();
-        
+
                 const mpeQuery = `SELECT mpe FROM quoteMPEs WHERE serverId=${interaction.guildId}`;
                 bot.database.query(mpeQuery, async function (err, results) {
                     if (err) return console.error(err.stack);
-        
+
                     let mpe = null;
-        
+
                     if (!results.length) {
                         mpe = await buildMPE(bot, interaction.guildId);
                     } else {
                         mpe = JSON.parse(results[0]['mpe']);
-        
+
                         if (!await validateMPE(bot, interaction.guildId, mpe)) {
                             mpe = await rebuildMPE(bot, interaction.guildId);
                         }
                     }
-        
-                    const embed = utils.getDefaultMessageEmbed(bot, { title:`Quotes Page [1/${mpe['num_pages']}]` });
+
+                    const embed = utils.getDefaultMessageEmbed(bot, { title: `Quotes Page [1/${mpe['num_pages']}]` });
                     mpe[`page_1`].forEach(x => {
-                        embed.addFields({name: `#${x['quoteId']}`, value: `${x['quote']}` });
+                        embed.addFields({ name: `#${x['quoteId']}`, value: `${x['quote']}` });
                     });
-        
+
                     const row = new ActionRowBuilder()
                         .addComponents(
                             new ButtonBuilder()
@@ -129,28 +134,42 @@ module.exports = {
                                 .setCustomId('quoteDeleteEmbed')
                                 .setLabel('Delete')
                                 .setStyle(ButtonStyle.Danger),
-                            );
-        
-                    interaction.editReply({ embeds: [ embed ], components: [ row ] });
+                        );
+
+                    interaction.editReply({ embeds: [embed], components: [row] });
                 });
-            break;
+                break;
+            case 'random':
+                const [query, args] = ['SELECT quoteId, quote FROM quotes WHERE serverId=?', [interaction.guildId]]
+                bot.database.query(query, args, async function (err, result) {
+                    const rand_quote = new Random().pick(result);
+                    const embed = utils.getDefaultMessageEmbed(bot)
+                        .addFields({ name: `**Quote #${rand_quote['quoteId']}**`, value: rand_quote['quote'] });
+                    interaction.reply({ embeds: [embed] });
+                });
+                break;
             case 'add':
+                // Check for perms
+                if (!perms.checkIsAdministrator(interaction.user)) {
+                    return utils.raiseError(bot, new PermissionError(interaction));
+                }
+
                 const quote = interaction.options.getString('quote');
                 const maxQuery = `SELECT MAX(quoteId) as maxId FROM quotes WHERE serverId=${interaction.guildId}`
                 bot.database.query(maxQuery, function (err, results) {
                     const quoteId = results[0]['maxId'];
-                    
+
                     const query = `INSERT INTO quotes (serverId, quoteId, quote) VALUES (${interaction.guildId}, ${quoteId}, ? )`;
-                    const args = [ quote ]
+                    const args = [quote]
                     bot.database.query(query, args, function (err, results) {
-                        if (err) return console.error(err.stack);
-    
-                        const embed = utils.getDefaultMessageEmbed(bot, { title:`Quote Added`, description: `**#${quoteId}:** ${quote}` });
-    
-                        interaction.reply({ embeds: [ embed ] })
+                        if (err) return utils.raiseError(bot, err);
+
+                        const embed = utils.getDefaultMessageEmbed(bot, { title: `Quote Added`, description: `**#${quoteId}:** ${quote}` });
+
+                        interaction.reply({ embeds: [embed] })
                     });
                 });
-            break;
+                break;
         }
 
     }

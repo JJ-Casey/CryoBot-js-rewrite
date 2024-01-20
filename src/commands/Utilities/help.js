@@ -42,15 +42,19 @@ function getAll(bot, message) {
         let filesArr = readdirSync(`./src/commands/${category}`)
             .filter(file => file.endsWith('.js')); // Accepts only .js files 
  
-        embed.addField(category, 
-            filesArr
-                .map(file => file.substring(0, file.length - 3)) // Removes the .js
-                .filter(cmd => {return !bot.commands.get(cmd).hidden }) // Removes the ones with a hidden property
-                .map(str => `\`${str}\``) // Formats the names to include monospace
-                .join(' ')); // Joints them by spaces instead of newlines
-
+        embed.addFields({
+            name : category,
+            value : filesArr
+                    .map(file => file.substring(0, file.length - 3)) // Removes the .js
+                    .filter(cmd => { try {return !bot.commands.get(cmd).hidden} catch {return !bot.slashCommands.get(cmd).hidden} }) // Removes the ones with a hidden property
+                    .map(str => `\`${str}\``) // Formats the names to include monospace
+                    .join(' ') // Joins them by spaces instead of newlines
+        });
     });
-
+    embed.addFields({
+        name : utils.emptyEmbed,
+        value : `To get help about a specific command, use \`${prefix}help [command name]\``
+    });
     // After they're all added, send it
     return message.channel.send({ embeds: [embed] });
 }
@@ -61,21 +65,29 @@ function getCmd(bot, message, input) {
         .setFooter({ text: 'Syntax: () = optional; [] = required; {a, b} = choose between a or b', iconURL: bot.user.displayAvatarURL({ dynamic: true }) });
 
     // Fetching the command data through bot.commands or bot.aliases
-    const cmd = bot.commands.get(input.toLowerCase()) || bot.commands.get(bot.aliases.get(input.toLowerCase()));
+    const textCmd = bot.commands.get(input.toLowerCase()) || bot.commands.get(bot.aliases.get(input.toLowerCase()));
+    const slashCmd = bot.slashCommands.get(input.toLowerCase()) || bot.slashCommands.get(bot.aliases.get(input.toLowerCase()));
 
-    // If the command isn't found (likely doesn't exist)
-    if(!cmd) {
-        return message.channel.send(`**${input.toLowerCase()}** is not a command?`);
+    let cmd;
+    if (textCmd) {
+        cmd = textCmd;
+    } else if (slashCmd) {
+        cmd = slashCmd;
+    } else {
+        return message.channel.send(`**${input.toLowerCase()}** is not a command`);
     }
 
     // Adds its name based on helpName || uppercase name
     if(cmd.name) embed.setDescription(`**${cmd.helpName ? cmd.helpName : cmd.name[0].toUpperCase() + cmd.name.slice(1)} Command**`);
     // Adds aliases by mapping them
-    if(cmd.aliases) embed.addField('Aliases', `${cmd.aliases.map(a => `\`${a}\``).join(' ')}`);
+    if(cmd.aliases) embed.addFields({ name: 'Aliases', value: `${cmd.aliases.map(a => `\`${a}\``).join(' ')}` });
     // The description
-    if(cmd.description) embed.addField('Description', `${cmd.description}`);
+    if(cmd.description) embed.addFields({ name: 'Description', value: `${cmd.description}`});
     // The usage
-    if(cmd.usage) embed.addField('Usage', `\`${prefix}${cmd.usage}\``);
+    if(cmd.usage) {
+        if (cmd.slash) embed.addFields({ name:'Usage', value: `\`/${cmd.usage}\`` });
+        else embed.addFields({ name:'Usage', value: `\`${prefix}${cmd.usage}\`` });
+    }
 
     return message.channel.send({ embeds: [embed] });
 }

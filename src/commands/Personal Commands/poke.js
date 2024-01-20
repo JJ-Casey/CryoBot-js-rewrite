@@ -52,10 +52,9 @@ module.exports = {
             }
         }
         
-        const file = new AttachmentBuilder('./assets/images/nami_spam_gif.gif', { name: 'namispam.gif' });
-        embed.setImage('attachment://namispam.gif');
+        embed.setImage('https://i.imgur.com/Q9V1ED5.gif');
         embed.setDescription(desc);
 
-        interaction.reply({embeds:[embed], files:[file]});
+        interaction.reply({embeds:[embed]});
     }
 };

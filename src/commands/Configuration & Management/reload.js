@@ -19,6 +19,7 @@ module.exports = {
         .addStringOption(option =>
             option.setName('command')
                 .setDescription('The command name to reload')
+                .setAutocomplete(true)
                 .setRequired(true)),
     
     /** 
@@ -26,10 +27,6 @@ module.exports = {
      * @param {ChatInputCommandInteraction} interaction 
      */
     run: async(bot, interaction) => {
-        if (interaction.member.id !== ownerID) {
-            return;
-        }
-
         const commandName = interaction.options.getString('command');
         let isSlash = false;
 

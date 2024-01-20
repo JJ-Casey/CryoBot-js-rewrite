@@ -1,4 +1,4 @@
-const { Message, MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { Message, MessageEmbed, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const Bot = require('../../../Bot');
 const colors = require('../../utils/colors.js');
 const perms = require('../../utils/perms.js');
@@ -22,16 +22,16 @@ module.exports = {
         const embed = new MessageEmbed({ title: 'Community Games Control Panel', description: 'Control Panel for the <@&847790366426005554> users'})
             .setColor(colors.Red)
             .addField('Status', 'Offline');
-        const row = new MessageActionRow()
+        const row = new ActionRowBuilder()
             .addComponents(
-                new MessageButton()
+                new ButtonBuilder()
                     .setCustomId('cpOpen')
                     .setLabel('Open')
-                    .setStyle('SUCCESS'),
-                    new MessageButton()
-                        .setCustomId('cpClose')
-                        .setLabel('Close')
-                        .setStyle('DANGER'),
+                    .setStyle(ButtonStyle.Success),
+                new ButtonBuilder()
+                    .setCustomId('cpClose')
+                    .setLabel('Close')
+                    .setStyle(ButtonStyle.Danger),
             );
         bot.channels.cache.get(community_cp_channel_id).send({ embeds:[embed], components: [row] });
     }

@@ -16,7 +16,7 @@ module.exports = {
         .setName('roll')
         .setDescription('Roll an M-sided die N times')
         .addIntegerOption(option =>
-            option.setName('num_dice')
+            option.setName('number')
                 .setDescription('The number of dice to roll')
                 .setMinValue(1)
                 .setMaxValue(100)
@@ -35,7 +35,7 @@ module.exports = {
     run: async (bot, interaction) => {
         const embed = utils.getDefaultMessageEmbed(bot, {title:'Roll Dice'});
 
-        let rolls = new Random().dice(interaction.options.getInteger('sides'), interaction.options.getInteger('num_dice'))
+        let rolls = new Random().dice(interaction.options.getInteger('sides'), interaction.options.getInteger('number'))
         const sum = rolls.reduce((a,b) => { return a+b; });
         const max = Math.max(...rolls);
         const min = Math.min(...rolls);

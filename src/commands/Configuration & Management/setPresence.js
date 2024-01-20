@@ -4,9 +4,8 @@ const colors = require('../../utils/colors.js');
 const utils = require('../../utils/discordUtils.js');
 const perms = require('../../utils/perms');
 
-choices = ['🙌 JJ is best admin 🙌', '🙌 Cat is best admin 🙌']
 module.exports = { 
-    name: 'set-presence',
+    name: 'setPresence',
     hidden: true,
     permissions: [ perms.checkIsAdministrator() ],
     usage: 'setPresence [presence text]',
@@ -42,6 +41,6 @@ module.exports = {
         const embed = utils.getDefaultMessageEmbed(bot)
             .setTitle('Set Presence')
             .setDescription(`Presence has been updated`);
-        interaction.reply({ ebeds:[embed]});
+        interaction.reply({ embeds:[embed]});
     }
 };

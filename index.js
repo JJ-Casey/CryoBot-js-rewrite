@@ -17,10 +17,10 @@ bot.on('rateLimit', rl => console.warn(
     Limit: ${rl.limit}
     Route: ${rl.route}`));
 bot.on('warn', w => console.warn(`${chalk.yellow('[Warn]')} - ${w}`));
-bot.on('error', e => console.error(`${chalk.redBright('[Error]')} - ${e.stack}`));
-process.on('uncaughtException', e => console.error(`${chalk.redBright('[Error]')} - ${e.stack}`));
-process.on('unhandledRejection', e => console.error(`${chalk.redBright('[Error]')} - ${e.stack}`));
-process.on('warning', e => console.warn(`${chalk.yellow('[Error]')} - ${e.stack}`));
+// bot.on('error', e => console.error(`${chalk.redBright('[Default Error]')} - ${e.stack}`));
+process.on('uncaughtException', e => console.error(`${chalk.redBright('[Uncaught Error]')} - ${e.stack}`));
+process.on('unhandledRejection', e => console.error(`${chalk.redBright('[Rejection Error]')} - ${e.stack}`));
+process.on('warning', e => console.warn(`${chalk.yellow('[Warning/Error]')} - ${e.stack}`));
 process.on('exit', () => { bot.database.end() });
 process.on('SIGINT', () => { bot.database.end() });
 process.on('SIGUSR1', () => { bot.database.end() });

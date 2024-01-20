@@ -1,19 +1,24 @@
 {
   "dependencies": {
     "ascii-table": "^0.0.9",
-    "axios": "^1.2.1",
+    "axios": "^1.5.0",
     "beautify": "^0.0.8",
     "chalk": "^4.1.2",
     "common-tags": "^1.8.2",
-    "dayjs": "^1.11.7",
-    "discord.js": "^14.7.1",
-    "dotenv": "^16.0.3",
+    "dayjs": "^1.11.10",
+    "discord.js": "^14.13.0",
+    "dotenv": "^16.3.1",
     "mysql": "^2.18.1",
-    "sqlite3": "^5.1.4"
+    "node-cron": "^3.0.2",
+    "pm2": "^5.3.0",
+    "sqlite3": "^5.1.6"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20",
+    "nodemon": "^2.0.22",
     "random-js": "^2.1.0"
+  },
+  "scripts": {
+    "start": "./node_modules/pm2/bin/pm2-runtime start index.js"
   },
   "main": "index.js",
   "nodeVersion": "17.6.0",

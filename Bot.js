@@ -1,4 +1,4 @@
-const { Client, Collection, GatewayIntentBits } = require('discord.js');
+const { Client, Collection, GatewayIntentBits, Partials } = require('discord.js');
 const fs = require('fs');
 const mysql = require('mysql');
 
@@ -10,8 +10,9 @@ const Bot = class extends Client {
                 GatewayIntentBits.GuildMessages,
                 GatewayIntentBits.MessageContent,
                 GatewayIntentBits.GuildMembers,
+                GatewayIntentBits.GuildMessageReactions
             ],
-            partials: ['REACTION']
+            partials: [Partials.Message, Partials.Channel, Partials.Reaction]
         });
 
         this.slashCommands = new Collection();
@@ -21,6 +22,14 @@ const Bot = class extends Client {
             .filter(f => fs.readdirSync(`./src/commands/${f}`).length > 0);
         this.timers = new Collection();
         this.database = mysql.createPool(process.env.DATABASE_URI);
+        this.asyncQuery = async (query, args) => {
+            return new Promise((resolve, reject) => {
+                this.database.query(query, args, function (err, results) {
+                    if (err) { reject(err); }
+                    resolve(results);
+                });
+            });
+        }
     }
 };
 module.exports = Bot;

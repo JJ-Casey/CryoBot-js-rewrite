@@ -10,7 +10,7 @@ mods = ['Nosp', 'Mitzy', 'Noah', 'Lens'];
  */
 module.exports = { 
     name: 'mod',
-    aliases: ['BestMod', 'bestMod', 'bestmod', 'mods'],
+    aliases: ['BestMod', 'bestMod', 'bestmod'],
     hidden: false,
     permissions: [],
     usage: 'mod',
@@ -19,7 +19,7 @@ module.exports = {
     
     slash: new SlashCommandBuilder()
         .setName('mod')
-        .setDescription('Displays the best mod'),
+        .setDescription('Displays who is the best moderator'),
 
     /** 
      * @param {Bot} bot 

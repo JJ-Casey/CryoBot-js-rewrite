@@ -4,7 +4,7 @@ const { readdirSync } = require('fs');
 
 
 let table = new ascii();
-table.setHeading('Command', 'Load Status');
+table.setHeading('Command', 'Load Status', 'Command Type');
 
 
 /**
@@ -23,16 +23,19 @@ function checkData(bot, command, fileName) {
         typeof run == 'function' &&
         typeof hidden == 'boolean'
     ) {
+        var comType = '';
         if (slash) {
-            bot.slashCommands.set(command.name, command)
+            bot.slashCommands.set(command.name, command);
+            comType = 'Slash';
         } else {
             bot.commands.set(command.name, command);
+            comType = 'Text';
         }
-        return table.addRow(fileName, success);
+        return table.addRow(fileName, success, comType);
     } else {
         console.log(`Didn't load ${fileName}`)
     }
-    return table.addRow(fileName, err);
+    return table.addRow(fileName, err, 'None');
 }
 /**
  * Requires and triggers a command from the ./commands/ directory when it is inputed by a user next to the prefix.

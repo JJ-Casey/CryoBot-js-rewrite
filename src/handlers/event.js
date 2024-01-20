@@ -1,4 +1,5 @@
 const Bot = require('../../Bot');
+const chalk = require('chalk');
 const { readdirSync } = require('fs');
 
 /**
@@ -9,10 +10,10 @@ const { readdirSync } = require('fs');
 module.exports = bot => {
     const load = dirs => {
         const events = readdirSync(`./src/events/${dirs}/`).filter(d => d.endsWith('.js'));
-        for(let file of events) {
+        for (let file of events) {
             const evt = require(`../events/${dirs}/${file}`);
             bot.on(evt.eventName, evt.callback.bind(null, bot));
         }
     };
-    ['client', 'guild'].forEach(x=>load(x));
+    ['client', 'guild', 'guild/rr', 'guild/quotes', 'guild/reactions'].forEach(x => load(x));
 };

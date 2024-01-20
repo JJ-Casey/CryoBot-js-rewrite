@@ -1,4 +1,4 @@
-const { Message } = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js');
 const Bot = require('../../../Bot');
 const { ownerID } = require('../../../config.json');
 const colors = require('../../utils/colors.js');
@@ -8,52 +8,58 @@ const perms = require('../../utils/perms.js');
 module.exports = {
     name: 'db',
     hidden: true,
-    permissions : [ perms.checkIsOwner() ],
+    permissions: [perms.checkIsOwner()],
     usage: 'db [SQL Query]',
     description: 'Execute SQL code to interact with the database.',
     category: 'Configuration & Management',
 
+    slash: new SlashCommandBuilder()
+        .setName('db')
+        .setDescription('Use SQL magic with the super secret database')
+        .addStringOption(option =>
+            option.setName('query')
+                .setDescription('The SQL query to execute')
+                .setRequired(true)),
     /** 
      * @param {Bot} bot 
      * @param {Message} message 
      * @param {string[]} args 
      */
-    run: async(bot, message, args) => {
-        if (message.author.id !== ownerID) {
+    run: async (bot, interaction) => {
+        if (interaction.member.id !== ownerID) {
             return;
         }
 
-        let query = args.join(' ');
+        const query = interaction.options.getString('query');
         bot.database.query(query, function (err, result) {
-            if (err){
-                let embeds = [
-                    utils.getDefaultMessageEmbed(bot, {title:'Error', color: colors.Red})
-                        .setDescription(`${err}`).addField('Query', `Parsed query: ${query}`)
-                ];
-    
-                return message.channel.send({ embeds });
+            if (err) {
+                const embed = utils.getDefaultMessageEmbed(bot, { title: 'Error', color: colors.Red })
+                    .setDescription(`${err}`).addField('Query', `Parsed query: ${query}`)
+
+                return interaction.reply({ embeds: [embed] })
+                    .then(msg => { setTimeout(() => msg.delete(), 5000) });
             }
 
-            let embed = utils.getDefaultMessageEmbed(bot, {title:'Database Query'})
-                    .addFields('Query', `Parsed query: ${query}`);
+            const embed = utils.getDefaultMessageEmbed(bot, { title: 'Database Query' })
+                .addFields({ name: 'Query', value: `Parsed query: \`${query}\`` });
 
             if (result.message) {
-                embed.addField('Message', `DB Message: ${result.message}`);
+                embed.addFields({ name: 'Message', value: `DB Message: ${result.message}` });
             } else {
                 try {
                     result.forEach(row => {
                         let val = 'For Each:\n';
                         for (let key in row) val += `**${key}**: ${row[key]}\n`;
-                        embed.addField('Row', val)
+                        embed.addFields({ name: 'Row', value: val })
                     });
                 } catch {
                     let val = '';
                     for (let key in result) val += `**${key}**: ${result[key]}\n`;
-                    embed.addField('Row', val)
+                    embed.addFields({ name: 'Row', value: val })
                 }
             }
 
-            message.channel.send({ embeds: [embed] });
+            return interaction.reply({ embeds: [embed] });
         });
     }
 };
