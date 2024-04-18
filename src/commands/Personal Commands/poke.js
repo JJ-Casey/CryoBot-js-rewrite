@@ -33,17 +33,17 @@ module.exports = {
         let target = interaction.options.getMember('target');
 
         let desc ='';
-        // if (interaction.member.id == nami_id) {
-        //     if (target != null) {
-        //         if (memb.id == nami_id) {
-        //             desc = `${message.author} hurt themselves in confusion!`;
-        //         } else {
-        //             desc = `${message.author} climbs out of their pond to poke {memb.mention}`;
-        //         }
-        //     } else {
-        //         desc = `${message.author} climbs out of their pond to assert dominance`;
-        //     }
-        // } else 
+        if (interaction.member.id == nami_id) {
+            if (target != null) {
+                if (memb.id == nami_id) {
+                    desc = `${message.author} hurt themselves in confusion!`;
+                } else {
+                    desc = `${message.author} climbs out of their pond to poke {memb.mention}`;
+                }
+            } else {
+                desc = `${message.author} climbs out of their pond to assert dominance`;
+            }
+        } else 
         {
             if (target != null) {
                 desc = `${author} steals Nami\'s staff to poke ${target}`;

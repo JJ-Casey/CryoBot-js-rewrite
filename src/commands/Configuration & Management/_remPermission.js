@@ -1,26 +1,26 @@
 const { ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder } = require('discord.js');
-const Bot = require('../../../Bot');
+const Bot = require('../../../Bot.js');
 const colors = require('../../utils/colors.js');
 const utils = require('../../utils/discordUtils.js');
-const perms = require('../../utils/perms');
+const perms = require('../../utils/perms.js');
 
 module.exports = { 
-    name: 'addPermission',
+    name: 'remPermission',
     hidden: true,
     permissions: [ perms.checkIsAdministrator() ],
-    usage: 'addPermission',
+    usage: 'remPermission',
     description: 'Adds a role or User to the permissions of a command',
     category: 'Configuration & Management',
 
     slash: new SlashCommandBuilder()
-        .setName('add-permission')
-        .setDescription('Adds a role or User to the permissions of a command')
+        .setName('rem-permission')
+        .setDescription('Removes a role or User from the permissions of a command')
         .addSubcommand(subcommand =>
             subcommand.setName('role')
-                .setDescription('Set the permission for a role')
+                .setDescription('Remove the permission for a role')
                 .addStringOption(option =>
                     option.setName('command')
-                        .setDescription('The command to set permissions of')
+                        .setDescription('The command to remove permissions of')
                         .setRequired(true)
                         .setAutocomplete(true))
                 .addRoleOption(option =>
@@ -29,7 +29,7 @@ module.exports = {
                     .setRequired(true)))
         .addSubcommand(subcommand =>
             subcommand.setName('user')
-                .setDescription('Set the permission for a User')
+                .setDescription('Remove the permission for a User')
                 .addStringOption(option =>
                     option.setName('command')
                         .setDescription('The command to set permissions of')
@@ -51,25 +51,25 @@ module.exports = {
         const user = interaction.options.getUser('target_user');
 
         const embed = utils.getDefaultMessageEmbed(bot)
-            .setTitle('Add Permissions')
+            .setTitle('Remove Permissions')
             .addFields(
                 { name:'Command', value: `${commandName}` }
                 );
         if (interaction.options.getSubcommand() == 'role') {
-            embed.addFields({ name: 'Role to give Permission', value: `${role}` });
+            embed.addFields({ name: 'Role to remove Permission', value: `${role}` });
         } else {
-            embed.addFields({ name: 'User to give Permission', value: `${user}` });
+            embed.addFields({ name: 'User to remove Permission', value: `${user}` });
         }
         embed.addFields({ name: utils.emptyEmbed, value: 'Are you sure?' });
 
         const row = new ActionRowBuilder()
             .addComponents(
                 new ButtonBuilder()
-                    .setCustomId(`permConfirm-${interaction.member.id}`)
+                    .setCustomId(`permRemoveConfirm-${interaction.member.id}`)
                     .setLabel('Yes')
                     .setStyle(ButtonStyle.Success),
                 new ButtonBuilder()
-                    .setCustomId(`permDeny-${interaction.member.id}`)
+                    .setCustomId(`permRemoveDeny-${interaction.member.id}`)
                     .setLabel('No')
                     .setStyle(ButtonStyle.Danger),
             );

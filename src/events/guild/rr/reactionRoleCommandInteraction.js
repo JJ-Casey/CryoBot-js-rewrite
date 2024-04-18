@@ -186,7 +186,7 @@ module.exports = {
                                 embeds: [
                                     utils.getDefaultMessageEmbed(bot, { title: 'Reaction Roles', color: colors.Green })
                                         .setDescription('Confirmed!')
-                                        .addField('Group Added', `Group **${groupName}** added!`)
+                                        .addFields({name : 'Group Added', value : `Group **${groupName}** added!`})
                                 ], components: []
                             });
                         });
@@ -195,7 +195,7 @@ module.exports = {
                 case 'rrIncorrect':
                     const embed = utils.getDefaultMessageEmbed(bot, { title: 'Reaction Roles', color: colors.Red })
                         .setDescription('Group information rejected')
-                        .addField('Cancelled Adding Group', 'To try adding a group again, use the command again!');
+                        .addFields({name: 'Cancelled Adding Group', value:  'To try adding a group again, use the command again!'});
                     interaction.update({ embeds: [embed], components: [] });
                     setTimeout(() => { interaction.message.delete(); }, 10000);
                     break;
@@ -212,7 +212,7 @@ module.exports = {
                                 embeds: [
                                     utils.getDefaultMessageEmbed(bot, { title: 'Reaction Roles', color: colors.Green })
                                         .setDescription('Deleted!')
-                                        .addField('Group Deleted', `Group **${groupName}** removed!`)
+                                        .addFields({name : 'Group Deleted', value : `Group **${groupName}** removed!`})
                                 ], components: []
                             });
                         });

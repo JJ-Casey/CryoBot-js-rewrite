@@ -27,7 +27,7 @@ module.exports = {
 
         var joined = new Date(target.joinedAt.toDateString());
 
-        if (target.id === 389919560607858688) { // Noah
+        if (target.id === '389919560607858688') { // Noah
             date = Date();
             date.setDate(20)
             date.setMonth(6)

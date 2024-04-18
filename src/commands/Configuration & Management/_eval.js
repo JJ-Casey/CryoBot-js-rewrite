@@ -48,9 +48,9 @@ module.exports = {
                     .setColor(colors.ForestGreen)
                     .setTimestamp()
                     .setTitle('Eval')
-                    .addField('To Evaluate', `\`\`\`js\n${beautify(toEval, { format: 'js' })}\n\`\`\``)
-                    .addField('Evaluated', str.replace(bot.token, null))
-                    .addField('Type of', typeof(evaluated))
+                    .addFields({name: 'To Evaluate', vale: `\`\`\`js\n${beautify(toEval, { format: 'js' })}\n\`\`\``})
+                    .addFields({name:'Evaluated', value : str.replace(bot.token, null)})
+                    .addFields({name : 'Type of', value: typeof(evaluated)})
                     .setFooter(bot.user.username, bot.user.displayAvatarURL)
             ];
 

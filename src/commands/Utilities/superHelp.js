@@ -43,12 +43,12 @@ function getAll(bot, message) {
         let filesArr = readdirSync(`./src/commands/${category}`)
             .filter(file => file.endsWith('.js')); // Accepts only .js files 
  
-        embed.addField(category, 
-            filesArr
+        embed.addFields({name: category, 
+            value: filesArr
                 .map(file => file.substring(0, file.length - 3)) // Removes the .js
                 // .filter(cmd => !bot.commands.get(cmd.toLowerCase()).hidden) // Removes the ones with a hidden property
                 .map(str => `\`${str}\``) // Formats the names to include monospace
-                .join(' ')); // Joints them by spaces instead of newlines
+                .join(' ')}); // Joins them by spaces instead of newlines
 
     });
 
@@ -72,11 +72,11 @@ function getCmd(bot, message, input) {
     // Adds its name based on helpName || uppercase name
     if(cmd.name) embed.setDescription(`**${cmd.helpName ? cmd.helpName : cmd.name[0].toUpperCase() + cmd.name.slice(1)} Command**`);
     // Adds aliases by mapping them
-    if(cmd.aliases) embed.addField('Aliases', `${cmd.aliases.map(a => `\`${a}\``).join(' ')}`);
+    if(cmd.aliases) embed.addFields({ name: 'Aliases', value : `${cmd.aliases.map(a => `\`${a}\``).join(' ')}`});
     // The description
-    if(cmd.description) embed.addField('Description', `${cmd.description}`);
+    if(cmd.description) embed.addFields({ name: 'Description', value : `${cmd.description}`});
     // The usage
-    if(cmd.usage) embed.addField('Usage', `\`${prefix}${cmd.usage}\``);
+    if(cmd.usage) embed.addFields({ name: 'Usage', value:`\`${prefix}${cmd.usage}\``});
 
     return message.channel.send({ embeds: [embed] });
 }

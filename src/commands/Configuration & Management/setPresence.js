@@ -37,7 +37,7 @@ module.exports = {
      * @param {ChatInputCommandInteraction} interaction 
      */
     run: async (bot, interaction) => {
-        bot.user.setActivity(interaction.options.getString('name'), { type: interaction.options.getString('type') });
+        bot.user.setActivity(interaction.options.getString('name'), { type: parseInt(interaction.options.getString('type')) });
         const embed = utils.getDefaultMessageEmbed(bot)
             .setTitle('Set Presence')
             .setDescription(`Presence has been updated`);

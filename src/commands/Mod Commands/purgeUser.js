@@ -32,7 +32,8 @@ module.exports = {
         interaction.channel.messages.fetch()
             .then(messages => {
                 const filtered_messages = messages.filter(m => m.author.id === target.id);
-                interaction.reply({ content: `Deleting ${filtered_messages.size} messages sent by ${target}`, ephemeral: true });
+                // interaction.reply({ content: `Deleting ${filtered_messages.size} messages sent by ${target}`, ephemeral: true });
+                interaction.reply({ content: `This would work if JJ could be bothered to use the Discord API better <:KEKW:740573019310784513>`, ephemeral: true });
                 // filtered_messages.forEach(msg => msg.delete());
             })
             .catch(console.error);

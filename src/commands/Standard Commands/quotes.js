@@ -1,4 +1,4 @@
-const { ChatInputCommandInteraction, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, bold } = require('discord.js');
+const { ChatInputCommandInteraction, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, bold, PermissionFlagsBits } = require('discord.js');
 const Bot = require('../../../Bot');
 const { Random } = require("random-js");
 const utils = require('../../utils/discordUtils.js');
@@ -11,7 +11,7 @@ function createMPE(results) {
     const jsonMPE = {};
     jsonMPE['num_quotes'] = results.length;
     jsonMPE['largestPK'] = Math.max(...results.map(x => x['quoteKEY']));
-    jsonMPE['num_pages'] = Math.floor(results.length / PAGE_SIZE) + 1
+    jsonMPE['num_pages'] = Math.ceil(results.length / PAGE_SIZE)
 
     for (let pageNo = 1; pageNo <= jsonMPE['num_pages']; pageNo++) {
         const pageQuotes = results.filter((v, i) => ((pageNo - 1) * PAGE_SIZE <= i) & (i < pageNo * PAGE_SIZE));
@@ -88,7 +88,9 @@ module.exports = {
                 .addStringOption(option =>
                     option.setName('quote')
                         .setDescription('The quote to be added')
-                        .setRequired(true))),
+                        .setRequired(true))
+                        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
+                    ),
 
     /** 
      * @param {Bot} bot 
@@ -157,11 +159,10 @@ module.exports = {
                 const quote = interaction.options.getString('quote');
                 const maxQuery = `SELECT MAX(quoteId) as maxId FROM quotes WHERE serverId=${interaction.guildId}`
                 bot.database.query(maxQuery, function (err, results) {
-                    const quoteId = results[0]['maxId'];
+                    const quoteId = results[0]['maxId'] + 1;
 
                     const query = `INSERT INTO quotes (serverId, quoteId, quote) VALUES (${interaction.guildId}, ${quoteId}, ? )`;
-                    const args = [quote]
-                    bot.database.query(query, args, function (err, results) {
+                    bot.database.query(query, [quote], function (err, results) {
                         if (err) return utils.raiseError(bot, err);
 
                         const embed = utils.getDefaultMessageEmbed(bot, { title: `Quote Added`, description: `**#${quoteId}:** ${quote}` });

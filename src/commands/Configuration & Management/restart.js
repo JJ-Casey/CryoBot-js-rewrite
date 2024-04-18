@@ -9,7 +9,7 @@ const API = require('../../utils/pebbleAPI.js')
 module.exports = {
     name: 'restart',
     hidden: true,
-    permissions: [perms.checkIsOwner()],
+    permissions: [ perms.checkIsOwner() ],
     usage: 'restart',
     description: 'Restarts the bot',
     category: 'Configuration & Management',

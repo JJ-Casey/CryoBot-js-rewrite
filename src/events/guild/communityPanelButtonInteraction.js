@@ -15,12 +15,12 @@ module.exports = {
                 case 'cpOpen':
                     interaction.update({ embeds: [ new MessageEmbed({ title: 'Community Games Control Panel', description: 'Control Panel for the <@&847790366426005554> users'})
                     .setColor(colors.Green)
-                    .addField('Status', 'Online')] });
+                    .addFields({name: 'Status', value:'Online'})] });
                     break;
                 case 'cpClose':
                     interaction.update({ embeds: [ new MessageEmbed({ title: 'Community Games Control Panel', description: 'Control Panel for the <@&847790366426005554> users'})
                     .setColor(colors.Red)
-                    .addField('Status', 'Offline')] });
+                    .addFields({ name: 'Status', value : 'Offline'})] });
                     break;
             }
         }

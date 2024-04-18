@@ -8,7 +8,7 @@ const perms = require('../../utils/perms.js');
 module.exports = {
     name: 'db',
     hidden: true,
-    permissions: [perms.checkIsOwner()],
+    permissions: [ perms.checkIsOwner() ],
     usage: 'db [SQL Query]',
     description: 'Execute SQL code to interact with the database.',
     category: 'Configuration & Management',
@@ -34,7 +34,7 @@ module.exports = {
         bot.database.query(query, function (err, result) {
             if (err) {
                 const embed = utils.getDefaultMessageEmbed(bot, { title: 'Error', color: colors.Red })
-                    .setDescription(`${err}`).addField('Query', `Parsed query: ${query}`)
+                    .setDescription(`${err}`).addFields({name : 'Query', value : `Parsed query: ${query}`})
 
                 return interaction.reply({ embeds: [embed] })
                     .then(msg => { setTimeout(() => msg.delete(), 5000) });

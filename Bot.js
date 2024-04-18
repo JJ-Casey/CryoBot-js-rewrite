@@ -20,6 +20,7 @@ const Bot = class extends Client {
         this.aliases = new Collection();
         this.categories = fs.readdirSync('./src/commands')
             .filter(f => fs.readdirSync(`./src/commands/${f}`).length > 0);
+        this.cooldowns = new Collection();
         this.timers = new Collection();
         this.database = mysql.createPool(process.env.DATABASE_URI);
         this.asyncQuery = async (query, args) => {

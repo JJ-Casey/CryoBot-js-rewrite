@@ -6,6 +6,7 @@ const dayjs = require('dayjs');
 var duration = require('dayjs/plugin/duration')
 dayjs.extend(duration)
 
+// These are the real ones
 const lost_id = '738395399458390058';
 const regular_id = '764511979133337611';
 const modern_id = '764511954769018900';

@@ -6,9 +6,9 @@ const { stripIndents } = require('common-tags');
 
 module.exports = { 
     name: 'ping',
-    aliases: ['pingu', 'pong'],
+    aliases: [ 'pingu', 'pong'],
     hidden : true,
-    permissions : [ perms.checkHasPermissions(PermissionFlagsBits.Administrator) ],
+    permissions : [ perms.checkIsAdministrator() ],
     usage: 'ping',
     description: 'Checks the latency of the bot and message latency, and checks if bot is on',
     category: 'Utilities',

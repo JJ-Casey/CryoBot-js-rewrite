@@ -39,7 +39,7 @@ async function createReactionEmbed(bot, group, serverId) {
 module.exports = {
     name: 'rr',
     hidden: true,
-    permissions: [perms.checkIsOwner()],
+    permissions: [ perms.checkIsOwner() ],
     usage: 'rr (subcommand) (options)',
     description: 'Reaction Role Stuff',
     category: 'Configuration & Management',

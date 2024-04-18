@@ -29,24 +29,24 @@ module.exports = {
             choices = fullInput.split(' ').filter(choice => choice.length > 0);
         }
 
-        const embed = utils.getDefaultMessageEmbed(bot, {title:'Choose'});
+        const embed = utils.getDefaultMessageEmbed(bot, { title: 'Choose' });
 
         if (choices.length == 0) {
             embed.setColor(colors.Orange);
             embed.setDescription(`${this.description}\n**Usage:** ${usage}`);
-            return message.reply({embeds:[embed]})
+            return message.reply({ embeds: [embed] })
         }
         if (choices.length == 1) {
             choices = choices[0].split(' ');
         }
         if (choices.length <= 1) {
             embed.setColor(colors.FireBrick);
-            embed.addField('Error', 'Please add more choices to choose from!');
-            embed.addField('Choices parsed', `${choices.join(", ")}`)
-            return message.reply({embeds:[embed]})
+            embed.addFields({ name: 'Error', value: 'Please add more choices to choose from!' });
+            embed.addFields({ name: 'Choices parsed', value: `${choices.join(", ")}` })
+            return message.reply({ embeds: [embed] })
         }
 
         embed.setDescription(`**Result:** ${new Random().pick(choices)}`);
-        return message.reply({embeds:[embed]})
+        return message.reply({ embeds: [embed] })
     }
 };

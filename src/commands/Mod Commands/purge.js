@@ -8,7 +8,7 @@ const utils = require('../../utils/discordUtils.js')
 module.exports = {
     name: 'purge',
     hidden: true,
-    permissions: [],
+    permissions: [ ],
     usage: 'purge',
     description: 'Deletes messages from the current channel',
     category: 'Mod Commands',

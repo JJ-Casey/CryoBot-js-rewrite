@@ -31,13 +31,15 @@ module.exports = {
      * @param {ChatInputCommandInteraction} interaction 
      */
     run: async (bot, interaction) => {
-        if (false) {
-            return bot.emit("error", new PermissionError(interaction));
+        if (interaction.user.id != '539443960813191179') {
+            const responseEmbed = utils.getDefaultMessageEmbed(bot, { title: 'Nuh uh', description : 'You\'re not Luxxi...', color: colors.FireBrick });
+            return interaction.reply({ embeds: [responseEmbed], ephemeral: true });
         }
+
         const target = interaction.options.getUser('target');
         const reason = interaction.options.getString('reason') ?? 'Luxx did not feel they were deserving of a reason...';
 
-        const unbannable_roles = ['Some dude', 'Admin', 'Mod', 'Soul Wardens', 'Bots', '@everyone']; // Change to IDs
+        const unbannable_roles = ['Some dude', 'Admin', 'Mod', 'Soul Wardens', 'Bots', '@everyone' ]; // Change to IDs?
 
         const memb = await interaction.guild.members.fetch(target);
         const target_role_intersection = memb.roles.cache.map(role => role.name).filter(rName => unbannable_roles.includes(rName))
