@@ -14,15 +14,15 @@ module.exports = {
         const cReactionKEY = await new Promise(((resolve) => {
             bot.database.query(`SELECT cReactionKEY FROM channelreactions WHERE serverId=${message.guildId} AND channelId=${message.channelId}`, function (err, results) {
                 if (err) reject(err);
-    
+
                 if (results.length == 0) {
-                    resolve(null);
+                    return resolve(null);
                 }
                 
                 if (message.content.startsWith('https://tenor.com')) {
-                    resolve(null);
+                    return resolve(null);
                 }
-                resolve(results[0]['cReactionKEY']);
+                return resolve(results[0]['cReactionKEY']);
             });
         }));
 

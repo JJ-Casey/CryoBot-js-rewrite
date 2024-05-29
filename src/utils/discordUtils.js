@@ -4,9 +4,6 @@ const colors = require('../utils/colors.js');
 
 module.exports = {
     emptyEmbed: '\u200b',
-    /** 
-    * @param {Bot} bot
-    */
     resolveMember(guild, memberIdentification) {
         if (!memberIdentification | memberIdentification.length == 0) {
             return null;

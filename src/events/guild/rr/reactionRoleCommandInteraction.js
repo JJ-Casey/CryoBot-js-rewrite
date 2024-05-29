@@ -148,7 +148,7 @@ module.exports = {
                                 if ([channelId, messageId].some(x => x == null)) {
                                     messLink = 'No message associated with reaction group';
                                 } else {
-                                    messLink = hyperlink('message link', `https://discord.com/channels/${serverId}/${channelId}/${messageId}`);
+                                    messLink = hyperlink('message link', `https://discord.com/channels/${interaction.guildId}/${channelId}/${messageId}`);
                                 }
 
                                 embed.setFields(

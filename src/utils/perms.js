@@ -30,14 +30,20 @@ module.exports = {
      * 
      * @returns {Function}
      */
-    checkIsAdministrator: () => {
+    checkIsAdministrator: (memberInput) => {
+        if (memberInput) {
+            return memberInput.permissions.has([ PermissionFlagsBits.Administrator ]);
+        }
         return (member) => member.permissions.has([ PermissionFlagsBits.Administrator ]);
     },
     /**
      * 
      * @returns {Function}
      */
-    checkIsOwner: () => {
+    checkIsOwner: (memberInput) => {
+        if (memberInput) {
+            return memberInput.id == ownerID;
+        }
         return (member) => member.id == ownerID;
     }
 }
