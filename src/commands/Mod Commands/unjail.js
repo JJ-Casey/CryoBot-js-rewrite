@@ -9,20 +9,20 @@ const colors = require("../../utils/colors.js");
 const utils = require("../../utils/discordUtils.js");
 
 module.exports = {
-  name: "jail",
+  name: "unjail",
   hidden: false,
   permissions: [],
-  usage: "jail [user]",
-  description: "Sends the user to the gulag",
+  usage: "unjail [user]",
+  description: "Removes the user from the gulag",
   category: "Mod Commands",
 
   slash: new SlashCommandBuilder()
-    .setName("jail")
-    .setDescription("Sends the user to the gulag")
+    .setName("unjail")
+    .setDescription("Remove the user from the gulag")
     .addUserOption((option) =>
       option
         .setName("target")
-        .setDescription("The user to jail")
+        .setDescription("The user to unjail")
         .setRequired(true)
     )
     .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers),
@@ -38,12 +38,12 @@ module.exports = {
 
     var target = interaction.options.getUser("target");
     interaction.guild.members.fetch(target.id).then((member) => {
-      member.roles.add("734397664833175642");
+      member.roles.remove("734397664833175642");
 
       const embed = utils
         .getDefaultMessageEmbed(bot, {
           title: "Jail",
-          description: `User ${member} has been jailed`,
+          description: `User ${member} has been released from jail`,
         })
         .setThumbnail(member.avatar_url);
       interaction.reply({ embeds: [embed] });

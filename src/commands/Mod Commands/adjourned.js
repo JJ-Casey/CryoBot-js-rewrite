@@ -9,22 +9,16 @@ const colors = require("../../utils/colors.js");
 const utils = require("../../utils/discordUtils.js");
 
 module.exports = {
-  name: "jail",
+  name: "adjourned",
   hidden: false,
   permissions: [],
-  usage: "jail [user]",
-  description: "Sends the user to the gulag",
+  usage: "adjourned",
+  description: "Adjourns court",
   category: "Mod Commands",
 
   slash: new SlashCommandBuilder()
-    .setName("jail")
-    .setDescription("Sends the user to the gulag")
-    .addUserOption((option) =>
-      option
-        .setName("target")
-        .setDescription("The user to jail")
-        .setRequired(true)
-    )
+    .setName("adjourned")
+    .setDescription("Cleans up court")
     .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers),
 
   /**
@@ -36,17 +30,20 @@ module.exports = {
     // jail 812742522194493440
     // on trial 813938638709719050
 
-    var target = interaction.options.getUser("target");
-    interaction.guild.members.fetch(target.id).then((member) => {
-      member.roles.add("734397664833175642");
-
+    interaction.guild.channels.fetch("733676206943371297").then((channel) => {
       const embed = utils
         .getDefaultMessageEmbed(bot, {
-          title: "Jail",
-          description: `User ${member} has been jailed`,
+          title: "Court is in Session",
+          description:
+            "This channel operates on *Slow Mode*. You may only speak every **1 minute**, so make your words count.",
         })
-        .setThumbnail(member.avatar_url);
-      interaction.reply({ embeds: [embed] });
+        .setAuthor({ name: "Judge CryoBot" })
+        .setImage((url = "https://i.imgur.com/ave0Q8e.png"));
+      channel.send({ embeds: [embed] });
+      interaction.reply({
+        content: "<a:thumbs_up:875343102590738455>",
+        ephemeral: true,
+      });
     });
   },
 };
