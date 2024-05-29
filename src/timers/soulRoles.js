@@ -72,7 +72,7 @@ module.exports = {
         }
       );
     }
-    // setImmediate(checkSoulLifetime)
-    setInterval(checkSoulLifetime, 86400 * 1000);
+    checkSoulLifetime();
+    setInterval(checkSoulLifetime, 3 * 60 * 60 * 1000);
   },
 };
