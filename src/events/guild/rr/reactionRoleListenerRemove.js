@@ -1,6 +1,5 @@
 const { User, MessageReaction } = require('discord.js');
 const Bot = require('../../../../Bot');
-const chalk = require('chalk');
 const utils = require('../../../utils/discordUtils.js')
 
 module.exports = {

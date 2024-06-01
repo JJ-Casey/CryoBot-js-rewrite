@@ -122,15 +122,9 @@ module.exports = {
                           const numTimeouts = Number(
                             results5[0]["numTimeouts"]
                           );
-                          const timeoutDuration = 2 ** numTimeouts * 1000;
-                          console.log(
-                            `Timing out for ${timeoutDuration / 1000} seconds`
-                          );
+                          const timeoutDuration = 5 * 2 ** numTimeouts * 1000;
                           member
                             .timeout(timeoutDuration, (reason = "Yapping"))
-                            .then(() => {
-                              console.log("Success!");
-                            })
                             .catch((err) => {
                               console.log(
                                 `Oops, tried to mod ${author.displayName} (ID: ${author.id}) and I don't have permission to do so!`

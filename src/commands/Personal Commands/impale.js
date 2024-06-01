@@ -12,7 +12,7 @@ const utils = require("../../utils/discordUtils.js");
 module.exports = {
   name: "impale",
   usage: "impale [user]",
-  hidden: true,
+  hidden: false,
   permissions: [],
   description: "Sends someone to the shadow realm",
   category: "Personal Commands",

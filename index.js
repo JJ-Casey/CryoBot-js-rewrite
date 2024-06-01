@@ -1,7 +1,6 @@
 // Modules
 const Bot = require('./Bot');
 require('dotenv').config({ path: './.env'});
-const chalk = require('chalk');
 const { readdirSync } = require('fs');
 const { stripIndents } = require('common-tags');
 
@@ -9,18 +8,16 @@ const { stripIndents } = require('common-tags');
 const bot = new Bot();
 
 // Debugging
-// bot.on('raw', console.log);
-// bot.on('debug', m => console.log(`${chalk.cyan('[Debug]')} - ${m}`));
 bot.on('rateLimit', rl => console.warn(
-    stripIndents`${chalk.yellow('[Ratelimit]')}
+    stripIndents`'[Ratelimit]'
     Timeout: ${rl.timeout}
     Limit: ${rl.limit}
     Route: ${rl.route}`));
-bot.on('warn', w => console.warn(`${chalk.yellow('[Warn]')} - ${w}`));
+bot.on('warn', w => console.warn(`[Warn] - ${w}`));
 // bot.on('error', e => console.error(`${chalk.redBright('[Default Error]')} - ${e.stack}`));
-process.on('uncaughtException', e => console.error(`${chalk.redBright('[Uncaught Error]')} - ${e.stack}`));
-process.on('unhandledRejection', e => console.error(`${chalk.redBright('[Rejection Error]')} - ${e.stack}`));
-process.on('warning', e => console.warn(`${chalk.yellow('[Warning/Error]')} - ${e.stack}`));
+process.on('uncaughtException', e => console.error(`[Uncaught Error] - ${e.stack}`));
+process.on('unhandledRejection', e => console.error(`[Rejection Error] - ${e.stack}`));
+process.on('warning', e => console.warn(`[Warning/Error] - ${e.stack}`));
 process.on('exit', () => { bot.database.end() });
 process.on('SIGINT', () => { bot.database.end() });
 process.on('SIGUSR1', () => { bot.database.end() });

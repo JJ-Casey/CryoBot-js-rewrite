@@ -2,7 +2,6 @@ const { ActivityType, Events } = require('discord.js');
 const Bot = require('../../../Bot');
 const colors = require('../../utils/colors.js');
 const { prefix } = require('../../../config.json');
-const chalk = require('chalk');
 const dayjs = require('dayjs');
 const utils = require('../../utils/discordUtils.js')
 

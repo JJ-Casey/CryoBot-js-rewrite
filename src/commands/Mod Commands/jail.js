@@ -4,7 +4,6 @@ const {
   PermissionFlagsBits,
 } = require("discord.js");
 const Bot = require("../../../Bot.js");
-const { ownerID } = require("../../../config.json");
 const colors = require("../../utils/colors.js");
 const utils = require("../../utils/discordUtils.js");
 

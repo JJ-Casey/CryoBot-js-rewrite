@@ -1,5 +1,4 @@
 const Bot = require('../../Bot');
-const chalk = require('chalk');
 const { readdirSync } = require('fs');
 
 module.exports = bot => {

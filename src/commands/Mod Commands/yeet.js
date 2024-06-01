@@ -14,7 +14,7 @@ const utils = require("../../utils/discordUtils.js");
 module.exports = {
   name: "yeet",
   usage: "yeet [user]",
-  hidden: true,
+  hidden: false,
   permissions: [],
   description: "Yeets someone from the server",
   category: "Mod Commands",

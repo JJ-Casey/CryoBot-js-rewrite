@@ -2,7 +2,6 @@ const { ActivityType, Events } = require("discord.js");
 const Bot = require("../../../Bot");
 const colors = require("../../utils/colors.js");
 const { prefix } = require("../../../config.json");
-const chalk = require("chalk");
 const dayjs = require("dayjs");
 const utils = require("../../utils/discordUtils.js");
 
@@ -16,7 +15,7 @@ const utils = require("../../utils/discordUtils.js");
 module.exports = {
   eventName: Events.ClientReady,
   callback: async (bot) => {
-    console.info(`${chalk.green("[Info]")} - ${bot.user.username} online!`);
+    console.info(`[Info] - ${bot.user.username} online!`);
 
     bot.database.query(
       "SELECT channelId FROM log_channels WHERE logName='BOT_DEBUG' AND serverId=733676009374744707",

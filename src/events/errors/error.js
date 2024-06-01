@@ -1,7 +1,6 @@
 const { Events } = require('discord.js');
 const Bot = require('../../../Bot.js');
 const colors = require('../../utils/colors.js');
-const chalk = require('chalk');
 const utils = require('../../utils/discordUtils.js')
 const PermissionError = require('../../utils/permissionError.js')
 
@@ -15,7 +14,7 @@ const PermissionError = require('../../utils/permissionError.js')
 module.exports = {
     eventName: Events.Error,
     callback: async (bot, error) => {
-        console.error(`${chalk.redBright('[Default Error Handler]')} - ${error.stack}`);
+        console.error(`[Default Error Handler] - ${error.stack}`);
 
         if (error instanceof PermissionError) {
             const permErrResponseEmbed = utils.getDefaultMessageEmbed(bot, {
