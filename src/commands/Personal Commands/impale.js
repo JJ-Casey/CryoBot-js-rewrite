@@ -62,21 +62,9 @@ module.exports = {
       return interaction.reply({ embeds: [responseEmbed], ephemeral: true });
     }
 
-    const unbannable_roles = [
-      "Some dude",
-      "Admin",
-      "Mod",
-      "Soul Wardens",
-      "Bots",
-      "@everyone",
-    ]; // Change to IDs
-
     const memb = await interaction.guild.members.fetch(target);
-    const target_role_intersection = memb.roles.cache
-      .map((role) => role.name)
-      .filter((rName) => unbannable_roles.includes(rName));
 
-    if (target_role_intersection.length > 0) {
+    if (utils.checkIsUnmoderatable(memb)) {
       const responseEmbed = utils.getDefaultMessageEmbed(bot, {
         title: "Nuh uh",
         color: colors.FireBrick,
@@ -117,7 +105,7 @@ module.exports = {
             throw err;
           }
           bot.guilds.cache
-            .get("733676009374744707")
+            .get(`${interaction.guildId}`)
             .channels.cache.get(result[0].channelId)
             .send({ embeds: [logEmbed] });
         }

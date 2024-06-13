@@ -1,3 +1,4 @@
+const { hyperlink } = require("discord.js");
 const colors = require("../utils/colors.js");
 const utils = require("../utils/discordUtils.js");
 const axios = require("axios");
@@ -74,10 +75,15 @@ module.exports = {
             function (err, results) {
               results.forEach((row) => {
                 const serverId = row["serverID"];
+                const serverKEY = row["serverKEY"];
                 const username = row["twitchusername"];
+                const displayname = row["twitchdisplayname"];
+                const userId = row["twitchId"];
                 const notisent = row["notisent"];
                 const channelId = row["channelID"];
                 const messageId = row["messageId"];
+                const streamId = row["streamId"];
+                const gameId = row["gameId"];
 
                 const target_url = `https://api.twitch.tv/helix/streams?user_login=${username}`;
 
@@ -96,32 +102,40 @@ module.exports = {
                     const data = response.data[0];
 
                     if (data) {
+                      const twitch_link = `https://www.twitch.tv/${data.user_login}`;
+                      const content_message = `<@&826016945635459135>\n\n**${data.user_name}** is live and playing __**${data.game_name}**__!\n\nJoin here: <${twitch_link}>`;
+                      const stream_preview = `${data.thumbnail_url
+                        .replace("{width}", "1920")
+                        .replace("{height}", "1080")}?${Date.now()}`;
+
                       if (!notisent) {
                         bot.guilds.cache
                           .get(`${serverId}`)
                           .channels.cache.get(`${channelId}`)
                           .send({
-                            content: `<@&826016945635459135>`,
+                            content: content_message,
                             embeds: [
                               utils
                                 .getDefaultMessageEmbed(bot, {
-                                  title: `${data.user_name} is live!`,
+                                  title: `${data.user_name} is live! Click to join!`,
                                   description: data.title,
                                 })
-                                .setURL(
-                                  `https://www.twitch.tv/${data.user_login}`
-                                )
-                                .setImage(
-                                  `${data.thumbnail_url
-                                    .replace("{width}", "1920")
-                                    .replace("{height}", "1080")}?${Date.now()}`
-                                ),
+                                .setURL(twitch_link)
+                                .setImage(stream_preview),
                             ],
                           })
                           .then((message) => {
                             bot.database.query(
-                              "UPDATE twitchnotifications SET notisent=1, messageId=? WHERE twitchusername=?",
-                              [message.id, username]
+                              "UPDATE twitchnotifications SET twitchdisplayname=?, twitchId=?, notisent=1, streamId=?, gameId=?, messageId=? WHERE twitchusername=? AND serverKEY=?",
+                              [
+                                data.user_name,
+                                data.user_id,
+                                data.id,
+                                data.game_id,
+                                message.id,
+                                username,
+                                serverKEY,
+                              ]
                             );
                           });
                       } else {
@@ -131,38 +145,59 @@ module.exports = {
                           .messages.fetch(`${messageId}`)
                           .then((message) => {
                             message.edit({
-                              content: `<@&826016945635459135>`,
+                              content: content_message,
                               embeds: [
                                 utils
                                   .getDefaultMessageEmbed(bot, {
-                                    title: `${data.user_name} is live!`,
+                                    title: `${data.user_name} is live! Click to join!`,
                                     description: data.title,
                                   })
-                                  .setURL(
-                                    `https://www.twitch.tv/${data.user_login}`
-                                  )
-                                  .setImage(
-                                    `${data.thumbnail_url
-                                      .replace("{width}", "1920")
-                                      .replace(
-                                        "{height}",
-                                        "1080"
-                                      )}?${Date.now()}`
-                                  ),
+                                  .setTimestamp(null)
+                                  .setURL(twitch_link)
+                                  .setImage(stream_preview),
                               ],
                             });
                           });
                       }
-                    } else {
+                    } else if (notisent) {
                       bot.database.query(
                         "UPDATE twitchnotifications SET notisent=0 WHERE twitchusername=?",
                         [username]
                       );
+
+                      const twitch_vod_api = `https://api.twitch.tv/helix/videos?user_id=${userId}&first=1`;
+                      axios
+                        .get(twitch_vod_api, {
+                          headers: headers,
+                          cache: false,
+                        })
+                        .then((result) => {
+                          const vodId = result.data.data[0].id;
+                          const vod_link = `https://www.twitch.tv/videos/${vodId}`;
+                          bot.guilds.cache
+                            .get(`${serverId}`)
+                            .channels.cache.get(`${channelId}`)
+                            .messages.fetch(`${messageId}`)
+                            .then((message) => {
+                              message.edit({
+                                content: `<@&826016945635459135>`,
+                                embeds: [
+                                  utils
+                                    .getDefaultMessageEmbed(bot, {
+                                      title: `**${displayname}** has ended their stream, but you can still watch the VOD!`,
+                                      description: ``,
+                                    })
+                                    .setURL(vod_link)
+                                    .setImage(
+                                      "https://media1.tenor.com/m/MKYpkoDZyHwAAAAd/spongebob-stream-what-am-i-supposed-to-do.gif"
+                                    ),
+                                ],
+                              });
+                            });
+                        });
                     }
                   })
-                  .catch((err) => {
-                    console.log(err);
-                  });
+                  .catch((err) => {});
               });
             }
           );
@@ -170,6 +205,6 @@ module.exports = {
       );
     }
     loop();
-    setInterval(loop, 1 * 30 * 1000);
+    setInterval(loop, 1 * 60 * 1000);
   },
 };

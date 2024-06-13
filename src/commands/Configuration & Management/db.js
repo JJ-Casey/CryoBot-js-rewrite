@@ -48,26 +48,30 @@ module.exports = {
 
       const embed = utils
         .getDefaultMessageEmbed(bot, { title: "Database Query" })
-        .addFields({ name: "Query", value: `Parsed query: \`${query}\`` });
-
-      if (result.message) {
-        embed.addFields({
-          name: "Message",
-          value: `DB Message: ${result.message}`,
+        .addFields({ name: "Query", value: `Parsed query: \`${query}\`` })
+        .addFields({
+          name: utils.emptyEmbed,
+          value: `Everything seems to be good <:hmmmApprove:1070371737633566742>`,
         });
-      } else {
-        try {
-          result.forEach((row) => {
-            let val = "For Each:\n";
-            for (let key in row) val += `**${key}**: ${row[key]}\n`;
-            embed.addFields({ name: "Row", value: val });
-          });
-        } catch {
-          let val = "";
-          for (let key in result) val += `**${key}**: ${result[key]}\n`;
-          embed.addFields({ name: "Row", value: val });
-        }
-      }
+
+      // if (result.message) {
+      //   embed.addFields({
+      //     name: "Message",
+      //     value: `DB Message: ${result.message}`,
+      //   });
+      // } else {
+      //   try {
+      //     result.forEach((row) => {
+      //       let val = "For Each:\n";
+      //       for (let key in row) val += `**${key}**: ${row[key]}\n`;
+      //       embed.addFields({ name: "Row", value: `Value: ${val}` });
+      //     });
+      //   } catch {
+      //     let val = "";
+      //     for (let key in result) val += `**${key}**: ${result[key]}\n`;
+      //     embed.addFields({ name: "Row", value: `Value: ${val}` });
+      //   }
+      // }
 
       return interaction.reply({ embeds: [embed] });
     });

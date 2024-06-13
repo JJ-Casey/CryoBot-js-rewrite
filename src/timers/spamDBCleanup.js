@@ -53,7 +53,7 @@ module.exports = {
                   const numTimeouts = Number(res[0]["numTimeouts"]);
                   if (
                     currTimestamp >=
-                    lastTimeout + 2 ** numTimeouts * 1000 + 5 * 2 * 60 * 1000
+                    lastTimeout + 5 * 2 ** numTimeouts * 1000 + 2 * 60 * 1000
                   ) {
                     // User has not been caught spamming for 2 minutes after their last time out, reset their timeout cooldown
                     bot.database.query(

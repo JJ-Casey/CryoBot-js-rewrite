@@ -19,29 +19,11 @@ module.exports = {
     const member = message.member;
     const author = message.author;
 
-    // if (perms.checkIsOwner(member)) {
-    //   return;
-    // }
-
-    // const unmoderateable_roles = [
-    //   "Some dude",
-    //   "Admin",
-    //   "Mod",
-    //   "Soul Wardens",
-    //   "Bots",
-    //   //   "@everyone",
-    // ]; // Change to IDs?
-
-    // const memb = await interaction.guild.members.fetch(target);
-    // const target_role_intersection = memb.roles.cache
-    //   .map((role) => role.name)
-    //   .filter((rName) => unmoderateable_roles.includes(rName));
-
-    // if (target_role_intersection.length > 0) {
-    //   return;
-    // }
-
     if (author.bot || !message.guild) {
+      return;
+    }
+
+    if (utils.checkIsUnmoderatable(member)) {
       return;
     }
 

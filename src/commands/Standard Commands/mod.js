@@ -32,9 +32,6 @@ mods_nolight = [
   "Grim",
 ];
 
-/**
- * If light is picked, edit the message after a few seconds and choose someone else
- */
 module.exports = {
   name: "mod",
   aliases: ["BestMod", "bestMod", "bestmod"],

@@ -67,7 +67,7 @@ function getAll(bot, interaction) {
   });
   embed.addFields({
     name: utils.emptyEmbed,
-    value: `To get help about a specific command, use \`/help [command name]\``,
+    value: `To get help about a specific command, use \`/commands [command name]\``,
   });
 
   return interaction.reply({ embeds: [embed] });
