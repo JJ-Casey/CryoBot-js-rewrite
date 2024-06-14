@@ -27,6 +27,10 @@ module.exports = {
       return;
     }
 
+    if (message.content == "") {
+      return;
+    }
+
     const serverId = message.guildId;
     const timestamp = message.createdTimestamp;
 

@@ -1,6 +1,5 @@
 const { Message, GuildMember } = require('discord.js');
 const Bot = require('../../../Bot');
-const colors = require('../../utils/colors.js');
 const utils = require('../../utils/discordUtils.js')
 
 module.exports = { 

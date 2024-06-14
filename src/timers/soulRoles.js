@@ -1,6 +1,5 @@
 const { Message } = require("discord.js");
 const Bot = require("../../Bot");
-const colors = require("../utils/colors.js");
 const utils = require("../utils/discordUtils.js");
 const dayjs = require("dayjs");
 var duration = require("dayjs/plugin/duration");
@@ -13,26 +12,28 @@ const modern_id = "764511954769018900";
 const ancient_id = "764512609542078504";
 
 const cryo_server_id = "724753586461868132";
+const jj_server_id = "733676009374744707";
 
 module.exports = {
   name: "Soul Roles",
   start(bot) {
     async function checkSoulLifetime() {
       // For the cryo server only
-      var guild = bot.guilds.cache.get("733676009374744707");
-      var members = await guild.members.fetch();
+      var guild = bot.guilds.cache.get(cryo_server_id);
+      var members = await guild.members.fetch(); // Check the database instead?
 
-      // Lost Soul
-      var lost_id = "737673361450205214";
-      // Regular Soul
-      var regular_id = "737673360472801342";
-      // Modern Soul
-      var modern_id = "737673359873277992";
-      // Ancient Soul
-      var ancient_id = "737652008382890066";
+      // // Lost Soul
+      // var lost_id = "737673361450205214";
+      // // Regular Soul
+      // var regular_id = "737673360472801342";
+      // // Modern Soul
+      // var modern_id = "737673359873277992";
+      // // Ancient Soul
+      // var ancient_id = "737652008382890066";
 
       bot.database.query(
-        `SELECT memberId, joinDate FROM members WHERE serverId='733676009374744707' AND bot='0'`,
+        `SELECT memberId, joinDate FROM members WHERE serverId=? AND bot='0'`,
+        [cryo_server_id],
         function (err, results) {
           const now = dayjs();
 

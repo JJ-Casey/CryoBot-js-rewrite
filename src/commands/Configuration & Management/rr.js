@@ -197,7 +197,7 @@ module.exports = {
                       utils
                         .getDefaultMessageEmbed(bot, {
                           title: "Error",
-                          color: colors.Red,
+                          color: colors.FireBrick,
                         })
                         .setDescription(`${err}`)
                         .addFields({
@@ -265,7 +265,7 @@ module.exports = {
             .setDescription(
               "Choose a group to remove\n**Selecting an option will immediately delete it! Be Careful!**"
             )
-            .setColor(colors.Red);
+            .setColor(colors.FireBrick);
           interaction
             .reply({ embeds: [embed], fetchReply: true })
             .then((reply) => {
@@ -277,7 +277,7 @@ module.exports = {
                       utils
                         .getDefaultMessageEmbed(bot, {
                           title: "Error",
-                          color: colors.Red,
+                          color: colors.FireBrick,
                         })
                         .setDescription(`${err}`)
                         .addFields({
@@ -402,7 +402,7 @@ module.exports = {
         } catch (err) {
           const errMsg = utils.getDefaultMessageEmbed(bot, {
             title: "Error",
-            color: colors.Red,
+            color: colors.FireBrick,
           });
           errMsg.setDescription(`Error Message: ${err.message}`);
           interaction.editReply({ embeds: [errMsg] });

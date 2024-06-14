@@ -4,7 +4,6 @@ const {
   PermissionFlagsBits,
 } = require("discord.js");
 const Bot = require("../../../Bot.js");
-const colors = require("../../utils/colors.js");
 const utils = require("../../utils/discordUtils.js");
 
 module.exports = {
@@ -37,7 +36,7 @@ module.exports = {
 
     var target = interaction.options.getUser("target");
     interaction.guild.members.fetch(target.id).then((member) => {
-      member.roles.add("734397664833175642");
+      member.roles.add("812742522194493440");
 
       const embed = utils
         .getDefaultMessageEmbed(bot, {

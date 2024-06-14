@@ -1,13 +1,17 @@
-const { SlashCommandBuilder, parseEmoji, formatEmoji } = require("discord.js");
+const {
+  SlashCommandBuilder,
+  PermissionFlagsBits,
+  parseEmoji,
+  formatEmoji,
+} = require("discord.js");
 const Bot = require("../../../Bot.js");
 const { ownerID } = require("../../../config.json");
-const colors = require("../../utils/colors.js");
 const utils = require("../../utils/discordUtils.js");
 const perms = require("../../utils/perms.js");
 
 module.exports = {
   name: "memberReactions",
-  hidden: true,
+  hidden: false,
   permissions: [perms.checkIsOwner()],
   usage: "memberReactions [sub command]",
   description: "Manage and view member reactions",
@@ -101,7 +105,8 @@ module.exports = {
             .setDescription("The new probability that the emote is added")
             .setRequired(true)
         )
-    ),
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
   /**
    * @param {Bot} bot
    * @param {Message} message
@@ -320,7 +325,7 @@ module.exports = {
                   embed.addFields({
                     name: "Success",
                     value: `${target} now be reacted to with ${emote} with a probability of ${
-                      100 * prob
+                      100 * newprob
                     }%`,
                     inline: true,
                   });

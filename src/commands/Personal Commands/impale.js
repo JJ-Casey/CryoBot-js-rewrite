@@ -37,12 +37,16 @@ module.exports = {
    */
   run: async (bot, interaction) => {
     // Mitzy, Luxx, and JJ
-    let allowed_users = ["539443960813191179", "235467134581342208"];
+    let allowed_users = [
+      "539443960813191179",
+      "235467134581342208",
+      "398957705294774272",
+    ];
 
     if (!allowed_users.includes(interaction.user.id)) {
       const responseEmbed = utils.getDefaultMessageEmbed(bot, {
         title: "Nuh uh",
-        description: "You're not Luxxi...",
+        description: "You're not Mitzy...",
         color: colors.FireBrick,
       });
       return interaction.reply({ embeds: [responseEmbed], ephemeral: true });

@@ -5,7 +5,6 @@ const {
 } = require("discord.js");
 const Bot = require("../../../Bot");
 const { ownerID } = require("../../../config.json");
-const colors = require("../../utils/colors.js");
 const perms = require("../../utils/perms.js");
 const utils = require("../../utils/discordUtils.js");
 

@@ -37,7 +37,10 @@ module.exports = {
     bot.database.query(query, function (err, result) {
       if (err) {
         const embed = utils
-          .getDefaultMessageEmbed(bot, { title: "Error", color: colors.Red })
+          .getDefaultMessageEmbed(bot, {
+            title: "Error",
+            color: colors.FireBrick,
+          })
           .setDescription(`${err}`)
           .addFields({ name: "Query", value: `Parsed query: ${query}` });
 

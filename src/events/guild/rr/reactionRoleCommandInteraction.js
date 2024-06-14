@@ -79,7 +79,7 @@ module.exports = {
                         if (result[0]['COUNT(1)']) {
                             return interaction.reply({
                                 embeds: [
-                                    utils.getDefaultMessageEmbed(bot, { title: 'Reaction Roles', color: colors.Red })
+                                    utils.getDefaultMessageEmbed(bot, { title: 'Reaction Roles', color: colors.FireBrick })
                                         .setDescription('Group name already exists!')
                                         .addFields(
                                             { name: 'Group Name', value: `**${groupName}**` },
@@ -136,7 +136,7 @@ module.exports = {
                             // Reaction Group Information
                             let query = `SELECT * FROM reactionGRM WHERE serverId='${interaction.guildId}' AND groupName='${groupName}'`;
                             bot.database.query(query, function (err, result) {
-                                if (err) { return message.edit({ embeds: [utils.getDefaultMessageEmbed(bot, { title: 'Error', color: colors.Red }).setDescription(`${err}`)] }); }
+                                if (err) { return message.edit({ embeds: [utils.getDefaultMessageEmbed(bot, { title: 'Error', color: colors.FireBrick }).setDescription(`${err}`)] }); }
 
                                 if (!result.length) { return; }
 
@@ -181,7 +181,7 @@ module.exports = {
                         // https://discordjs.guide/interactions/select-menus.html#accessing-select-menu-interaction-values
                         const groupName = interaction.message.embeds[0].fields[0].value;
                         bot.database.query(`INSERT INTO reactiongroups (serverId, groupName) VALUES (${interaction.guildId}, '${groupName}')`, function (err, result) {
-                            if (err) { interaction.reply({ embeds: [utils.getDefaultMessageEmbed(bot, { title: 'Error', color: colors.Red }).setDescription(`${err}`)] }); }
+                            if (err) { interaction.reply({ embeds: [utils.getDefaultMessageEmbed(bot, { title: 'Error', color: colors.FireBrick }).setDescription(`${err}`)] }); }
                             interaction.update({
                                 embeds: [
                                     utils.getDefaultMessageEmbed(bot, { title: 'Reaction Roles', color: colors.Green })
@@ -193,7 +193,7 @@ module.exports = {
                     }
                     break;
                 case 'rrIncorrect':
-                    const embed = utils.getDefaultMessageEmbed(bot, { title: 'Reaction Roles', color: colors.Red })
+                    const embed = utils.getDefaultMessageEmbed(bot, { title: 'Reaction Roles', color: colors.FireBrick })
                         .setDescription('Group information rejected')
                         .addFields({name: 'Cancelled Adding Group', value:  'To try adding a group again, use the command again!'});
                     interaction.update({ embeds: [embed], components: [] });
@@ -207,7 +207,7 @@ module.exports = {
                         const groupName = interaction.message.embeds[0].fields[0].value;
 
                         bot.database.query(`DELETE FROM reactiongroups WHERE serverId=${interaction.guildId} AND groupName='${groupName}'`, function (err, result) {
-                            if (err) { interaction.reply({ embeds: [utils.getDefaultMessageEmbed(bot, { title: 'Error', color: colors.Red }).setDescription(`${err}`)] }); }
+                            if (err) { interaction.reply({ embeds: [utils.getDefaultMessageEmbed(bot, { title: 'Error', color: colors.FireBrick }).setDescription(`${err}`)] }); }
                             interaction.update({
                                 embeds: [
                                     utils.getDefaultMessageEmbed(bot, { title: 'Reaction Roles', color: colors.Green })
@@ -235,14 +235,14 @@ module.exports = {
                         let valid = true;
                         if (roleId == null) {
                             valid = false;
-                            embed.setColor(colors.Red);
+                            embed.setColor(colors.FireBrick);
                             embed.addFields({ name: 'Invalid Role', value: `${roleMention} isn't a valid role in this server!` });
                         }
                         if (!isUnicode) {
                             const parsedReacc = parseEmoji(reacc);
                             if (interaction.guild.emojis.cache.get(parsedReacc.id) == null) {
                                 valid = false;
-                                embed.setColor(colors.Red);
+                                embed.setColor(colors.FireBrick);
                                 embed.addFields({ name: 'Invalid Reaction Emoji', value: `The emoji ${reacc} isn't a valid emoji in this server!` });
                             }
                         }
@@ -262,14 +262,14 @@ module.exports = {
                                 if (reactions.some(x => x == reacc)) {
                                     return interaction.update({
                                         embeds: [
-                                            utils.getDefaultMessageEmbed(bot, { title: 'Reaction Roles', color: colors.Red })
+                                            utils.getDefaultMessageEmbed(bot, { title: 'Reaction Roles', color: colors.FireBrick })
                                                 .addFields({ name: 'Reaction already exists', value: `The reaction ${reacc} is already a reaction for the group ${bold(groupName)}` })
                                         ], components: []
                                     });
                                 } else if (roles.some(x => x == roleId)) {
                                     return interaction.update({
                                         embeds: [
-                                            utils.getDefaultMessageEmbed(bot, { title: 'Reaction Roles', color: colors.Red })
+                                            utils.getDefaultMessageEmbed(bot, { title: 'Reaction Roles', color: colors.FireBrick })
                                                 .addFields({ name: 'Role already exists', value: `The role <@&${roleId}> is already a role for the group ${bold(groupName)}` })
                                         ], components: []
                                     });
@@ -299,7 +299,7 @@ module.exports = {
                         console.log(`${groupName} ${role} ${reacc}`);
                         interaction.reply('D:');
                         // bot.database.query(`INSERT INTO reactiongroups (serverId, groupName) VALUES (${interaction.guildId}, '${groupName}')`, function (err, result) {
-                        //     if (err) { interaction.reply({ embeds: [utils.getDefaultMessageEmbed(bot, { title: 'Error', color: colors.Red }).setDescription(`${err}`)] }); }
+                        //     if (err) { interaction.reply({ embeds: [utils.getDefaultMessageEmbed(bot, { title: 'Error', color: colors.FireBrick }).setDescription(`${err}`)] }); }
                         //     interaction.update({
                         //         embeds: [
                         //             utils.getDefaultMessageEmbed(bot, { title: 'Reaction Roles', color: colors.Green })

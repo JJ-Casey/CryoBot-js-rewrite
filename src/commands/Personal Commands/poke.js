@@ -4,7 +4,6 @@ const {
   AttachmentBuilder,
 } = require("discord.js");
 const Bot = require("../../../Bot");
-const colors = require("../../utils/colors.js");
 const utils = require("../../utils/discordUtils.js");
 
 const nami_id = "270944077820854273";
@@ -41,9 +40,9 @@ module.exports = {
     if (interaction.member.id == nami_id) {
       if (target != null) {
         if (memb.id == nami_id) {
-          desc = `${message.author} hurt themselves in confusion!`;
+          desc = `${author} hurt themselves in confusion!`;
         } else {
-          desc = `${message.author} climbs out of their pond to poke {memb.mention}`;
+          desc = `${author} climbs out of their pond to poke ${target}`;
         }
       } else {
         desc = `${message.author} climbs out of their pond to assert dominance`;

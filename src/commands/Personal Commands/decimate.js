@@ -58,6 +58,7 @@ module.exports = {
     if (target.id == interaction.member.id) {
       const responseEmbed = utils.getDefaultMessageEmbed(bot, {
         title: "Why?",
+        // hairdryer
         description: "What a weirdo <a:Classic:1214903208284262412>",
         color: colors.FireBrick,
       });
@@ -67,26 +68,36 @@ module.exports = {
     const memb = await interaction.guild.members.fetch(target);
 
     if (utils.checkIsUnmoderatable(memb)) {
-      const responseEmbed = utils.getDefaultMessageEmbed(bot, {
-        title: "Nuh uh",
-        color: colors.FireBrick,
-      });
-      return interaction.reply({ embeds: [responseEmbed], ephemeral: true });
+      const responseEmbed = utils
+        .getDefaultMessageEmbed(bot, {
+          title: "Nuh uh",
+          color: colors.FireBrick,
+        })
+        .setImage("https://cdn.imgchest.com/files/3yrgca95d94.gif");
+      return interaction.reply({ embeds: [responseEmbed] });
     }
 
     // ban
     // await interaction.guild.members.ban(target);
 
-    const responseEmbed = utils.getDefaultMessageEmbed(bot, {
-      title: "",
-      description: "Luxx has decimated another mortal!",
-      color: colors.FireBrick,
-    });
+    const responseEmbed = utils
+      .getDefaultMessageEmbed(bot, {
+        title: "",
+        description: "Luxx has decimated another mortal!",
+        color: colors.FireBrick,
+      })
+      .addFields({
+        name: utils.emptyEmbed,
+        value: `**Reason:** ${reason}`,
+      });
 
     const gifs = [
       "https://media.tenor.com/kQryFMu7fhoAAAAC/rezero-rem.gif",
       "https://media.tenor.com/XQiSjsnR2g8AAAAC/rem-re-zero.gif",
       "https://media1.tenor.com/m/o4ReLVIi2osAAAAC/re-zero-anime.gif",
+      "https://cdn.imgchest.com/files/b49zc9vk8ay.gif",
+      "https://cdn.imgchest.com/files/myd5cgmznj4.gif",
+      "https://cdn.imgchest.com/files/myd5cgmzwm4.gif",
     ];
     const gif_to_send = new Random().pick(gifs);
 

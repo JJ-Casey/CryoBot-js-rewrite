@@ -1,5 +1,4 @@
 const { hyperlink } = require("discord.js");
-const colors = require("../utils/colors.js");
 const utils = require("../utils/discordUtils.js");
 const axios = require("axios");
 

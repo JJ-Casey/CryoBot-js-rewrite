@@ -1,6 +1,5 @@
 const { ChatInputCommandInteraction, ActivityType, SlashCommandBuilder } = require('discord.js');
 const Bot = require('../../../Bot');
-const colors = require('../../utils/colors.js');
 const utils = require('../../utils/discordUtils.js');
 const perms = require('../../utils/perms');
 

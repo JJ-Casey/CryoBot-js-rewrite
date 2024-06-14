@@ -32,7 +32,7 @@ module.exports = {
 function getAll(bot, message) {
   const embed = utils
     .getDefaultMessageEmbed(bot)
-    .setColor(colors.Orange)
+    .setColor(colors.DefaultEmbed)
     .setFooter({
       text: "Syntax: () = optional, [] = required, {a, b} = choose between a or b",
       iconURL: bot.user.displayAvatarURL({ dynamic: true }),
@@ -67,7 +67,7 @@ function getAll(bot, message) {
 function getCmd(bot, message, input) {
   const embed = utils
     .getDefaultMessageEmbed()
-    .setColor(colors.SteelBlue)
+    .setColor(colors.DefaultEmbed)
     .setFooter({
       text: "Syntax: () = optional; [] = required; {a, b} = choose between a or b",
       iconURL: bot.user.displayAvatarURL({ dynamic: true }),

@@ -43,13 +43,10 @@ module.exports = {
 };
 
 function getAll(bot, interaction) {
-  const embed = utils
-    .getDefaultMessageEmbed(bot)
-    .setColor(colors.Orange)
-    .setFooter({
-      text: "Syntax: () = optional, [] = required, {a, b} = choose between a or b",
-      iconURL: bot.user.displayAvatarURL({ dynamic: true }),
-    });
+  const embed = utils.getDefaultMessageEmbed(bot).setFooter({
+    text: "Syntax: () = optional, [] = required, {a, b} = choose between a or b",
+    iconURL: bot.user.displayAvatarURL({ dynamic: true }),
+  });
 
   bot.categories.forEach((category) => {
     const commands_in_category = bot.slashCommands
@@ -74,13 +71,10 @@ function getAll(bot, interaction) {
 }
 
 function getCmd(bot, interaction, command_name) {
-  const embed = utils
-    .getDefaultMessageEmbed(bot)
-    .setColor(colors.SteelBlue)
-    .setFooter({
-      text: "Syntax: () = optional; [] = required; {a, b} = choose between a or b",
-      iconURL: bot.user.displayAvatarURL({ dynamic: true }),
-    });
+  const embed = utils.getDefaultMessageEmbed(bot).setFooter({
+    text: "Syntax: () = optional; [] = required; {a, b} = choose between a or b",
+    iconURL: bot.user.displayAvatarURL({ dynamic: true }),
+  });
 
   // Fetching the command data through bot.commands or bot.aliases
   const command = bot.slashCommands.get(command_name);

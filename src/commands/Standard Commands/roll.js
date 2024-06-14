@@ -3,7 +3,6 @@ const {
   SlashCommandBuilder,
 } = require("discord.js");
 const Bot = require("../../../Bot");
-const colors = require("../../utils/colors.js");
 const { Random, string } = require("random-js");
 const utils = require("../../utils/discordUtils.js");
 

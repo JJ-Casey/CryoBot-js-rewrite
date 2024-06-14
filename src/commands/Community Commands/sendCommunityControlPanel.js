@@ -20,7 +20,7 @@ module.exports = {
      */
     run: async (bot, message, args) => {
         const embed = new MessageEmbed({ title: 'Community Games Control Panel', description: 'Control Panel for the <@&847790366426005554> users'})
-            .setColor(colors.Red)
+            .setColor(colors.FireBrick)
             .addFields({ name: 'Status', value: 'Offline'});
         const row = new ActionRowBuilder()
             .addComponents(

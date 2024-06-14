@@ -1,6 +1,5 @@
 const { Interaction, ActionRowBuilder, ButtonBuilder, ButtonStyle, bold, parseEmoji, formatEmoji, hyperlink } = require('discord.js');
 const Bot = require('../../../../Bot');
-const colors = require('../../../utils/colors.js');
 const utils = require('../../../utils/discordUtils.js');
 
 module.exports = {

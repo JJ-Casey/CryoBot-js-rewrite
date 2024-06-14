@@ -1,5 +1,11 @@
 {
-    "DefaultEmbed": "#FF69B4",
+    "DefaultEmbed": "#BF31BF",
+
+    "Orchid": "#D86CE0",
+    "SteelPink": "#BF31BF",
+    "MardiGras": "#842878",
+    "Indigo": "#5D0D7A",
+    "DarkPurple": "#290825",
 
     "Red": "#FF0000",
     "FireBrick": "#B22222",
