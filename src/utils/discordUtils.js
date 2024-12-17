@@ -1,9 +1,16 @@
-const { EmbedBuilder } = require("discord.js");
+const { EmbedBuilder, Message } = require("discord.js");
 const Bot = require("../../Bot");
 const colors = require("../utils/colors.js");
 
 module.exports = {
   emptyEmbed: "\u200b",
+  deleteNoError(timeout) {
+    return (msg) => {
+      setTimeout(() => {
+        msg.delete().catch((e) => {});
+      }, timeout);
+    };
+  },
   resolveMember(guild, memberIdentification) {
     if (!memberIdentification | (memberIdentification.length == 0)) {
       return null;

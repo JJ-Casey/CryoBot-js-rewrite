@@ -88,7 +88,7 @@ module.exports = {
             });
         });
       } catch (error) {
-        console.error(error);
+        console.error(`An error: ${error}`);
       }
     })();
   },

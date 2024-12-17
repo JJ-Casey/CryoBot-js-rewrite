@@ -77,7 +77,7 @@ module.exports = {
     }
 
     // ban
-    // await interaction.guild.members.ban(target);
+    await interaction.guild.members.ban(target);
 
     const responseEmbed = utils.getDefaultMessageEmbed(bot, {
       title: "",
@@ -86,7 +86,7 @@ module.exports = {
     });
 
     // 398957705294774272
-    interaction.guild.members.fetch("235467134581342208").then((mitzy) => {
+    interaction.guild.members.fetch("398957705294774272").then((mitzy) => {
       responseEmbed.setThumbnail(mitzy.displayAvatarURL({ dynamic: true }));
       interaction.reply({ embeds: [responseEmbed] });
 

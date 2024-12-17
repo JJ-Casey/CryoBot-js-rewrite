@@ -37,9 +37,7 @@ function get_bearer_token(bot) {
         );
         return access_token;
       })
-      .catch((err) => {
-        console.log(err);
-      }))();
+      .catch((err) => {}))();
 }
 
 module.exports = {
@@ -53,20 +51,13 @@ module.exports = {
           var access_token;
           if (results.length == 0) {
             access_token = get_bearer_token(bot);
-            // console.log("New access token generated. Reason: Doesn't exist");
           } else {
             access_token = results[0]["tokenValue"];
             var expires = results[0]["expires"];
 
             if (Date.now() >= expires) {
               access_token = get_bearer_token(bot);
-              // console.log("New access token generated. Reason: Expired");
             }
-            // console.log(
-            //   `Access token loaded. Expires in ${
-            //     (expires - Date.now()) / 1000
-            //   }s`
-            // );
           }
 
           bot.database.query(

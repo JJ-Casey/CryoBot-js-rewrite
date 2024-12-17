@@ -29,20 +29,30 @@ module.exports = {
     // jail 812742522194493440
     // on trial 813938638709719050
 
-    interaction.guild.channels.fetch("733676206943371297").then((channel) => {
-      const embed = utils
-        .getDefaultMessageEmbed(bot, {
-          title: "Court is in Session",
-          description:
-            "This channel operates on *Slow Mode*. You may only speak every **1 minute**, so make your words count.",
+    interaction.guild.channels.fetch("813402218811490374").then((channel) => {
+      channel.messages
+        .fetch()
+        .then((messages) => {
+          interaction.reply({
+            content: "Deleting Messages <a:thumbs_up:875343102590738455>",
+            ephemeral: true,
+          });
+          let promises = messages.map((message) => message.delete());
+          Promise.all(promises)
+            .then(() => {
+              const embed = utils
+                .getDefaultMessageEmbed(bot, {
+                  title: "Court is in Session",
+                  description:
+                    "This channel operates on *Slow Mode*. You may only speak every **1 minute**, so make your words count.",
+                })
+                .setAuthor({ name: "Judge CryoBot" })
+                .setImage((url = "https://i.imgur.com/ave0Q8e.png"));
+              channel.send({ embeds: [embed] });
+            })
+            .catch(console.error);
         })
-        .setAuthor({ name: "Judge CryoBot" })
-        .setImage((url = "https://i.imgur.com/ave0Q8e.png"));
-      channel.send({ embeds: [embed] });
-      interaction.reply({
-        content: "<a:thumbs_up:875343102590738455>",
-        ephemeral: true,
-      });
+        .catch(console.error);
     });
   },
 };

@@ -37,9 +37,9 @@ module.exports = {
     let target = interaction.options.getMember("target");
 
     let desc = "";
-    if (interaction.member.id == nami_id) {
+    if (author.id == nami_id) {
       if (target != null) {
-        if (memb.id == nami_id) {
+        if (target.id == nami_id) {
           desc = `${author} hurt themselves in confusion!`;
         } else {
           desc = `${author} climbs out of their pond to poke ${target}`;
@@ -49,7 +49,11 @@ module.exports = {
       }
     } else {
       if (target != null) {
-        desc = `${author} steals Nami\'s staff to poke ${target}`;
+        if (target.id == author.id) {
+          desc = `${author} hurt themselves in confusion!`;
+        } else {
+          desc = `${author} steals Nami\'s staff to poke ${target}`;
+        }
       } else {
         desc = `${author} steals Nami\'s staff. Give it back <:pepeHmmm:768807772548497420>`;
       }

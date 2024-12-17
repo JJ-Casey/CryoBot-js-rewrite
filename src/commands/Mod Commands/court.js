@@ -37,15 +37,16 @@ module.exports = {
 
     var target = interaction.options.getUser("target");
     interaction.guild.members.fetch(target.id).then((member) => {
-      if (!member.roles.cache.some((role) => role.id == "734397664833175642")) {
+      if (!member.roles.cache.some((role) => role.id == "812742522194493440")) {
         return interaction.reply({
           content: "That user isn't jailed, stupid!",
           ephemeral: true,
         });
       }
 
-      member.roles.add("734397664833175642");
-      interaction.guild.channels.fetch("733676206943371297").then((channel) => {
+      member.roles.add("813938638709719050");
+      // court 813402218811490374
+      interaction.guild.channels.fetch("813402218811490374").then((channel) => {
         interaction.reply({
           content: `Done! Go to ${channel}`,
           ephemeral: true,

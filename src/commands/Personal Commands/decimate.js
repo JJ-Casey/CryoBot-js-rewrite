@@ -78,7 +78,7 @@ module.exports = {
     }
 
     // ban
-    // await interaction.guild.members.ban(target);
+    await interaction.guild.members.ban(target);
 
     const responseEmbed = utils
       .getDefaultMessageEmbed(bot, {

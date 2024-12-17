@@ -36,16 +36,16 @@ function createMPE(results) {
 async function buildMPE(bot, serverId) {
   return new Promise((resolve, reject) => {
     bot.database.query(
-      `SELECT quoteKEY, quoteId, quote FROM quotes WHERE serverId=${serverId}`,
+      `SELECT quoteKEY, quoteId, quote FROM quotes WHERE serverId=?`,
+      [serverId],
       function (err, results) {
         if (err) reject(err);
 
         const mpe = createMPE(results);
 
         bot.database.query(
-          `INSERT INTO quoteMPEs (mpe, serverId) VALUES ('${JSON.stringify(
-            mpe
-          )}', '${serverId}')`,
+          `INSERT INTO quoteMPEs (mpe, serverId) VALUES (?, ?)`,
+          [JSON.stringify(mpe), serverId],
           function (err, results) {
             if (err) reject(err.stack);
             resolve(mpe);
@@ -59,16 +59,16 @@ async function buildMPE(bot, serverId) {
 async function rebuildMPE(bot, serverId) {
   return new Promise((resolve, reject) => {
     bot.database.query(
-      `SELECT quoteKEY, quoteId, quote FROM quotes WHERE serverId=${serverId}`,
+      `SELECT quoteKEY, quoteId, quote FROM quotes WHERE serverId=?`,
+      [serverId],
       function (err, results) {
         if (err) return reject(err);
 
         const mpe = createMPE(results);
 
         bot.database.query(
-          `UPDATE quoteMPEs mpe SET mpe='${JSON.stringify(
-            mpe
-          )}' WHERE serverId='${serverId}'`,
+          `UPDATE quoteMPEs mpe SET mpe=? WHERE serverId=?`,
+          [JSON.stringify(mpe), serverId],
           function (err, results) {
             if (err) return reject(err.stack);
             resolve(mpe);
@@ -82,7 +82,8 @@ async function rebuildMPE(bot, serverId) {
 async function validateMPE(bot, serverId, mpe) {
   return new Promise((resolve, reject) => {
     bot.database.query(
-      `SELECT MAX(quoteKEY) AS mKEY, COUNT(*) AS numRows FROM quotes WHERE serverId='${serverId}'`,
+      `SELECT MAX(quoteKEY) AS mKEY, COUNT(*) AS numRows FROM quotes WHERE serverId=?`,
+      [serverId],
       function (err, results) {
         if (err) {
           return reject(err);
@@ -115,6 +116,17 @@ module.exports = {
         .setDescription("View all quotes from this server!")
     )
     .addSubcommand((subcommand) =>
+      subcommand
+        .setName("get")
+        .setDescription("Get a quote with the given ID!")
+        .addIntegerOption((option) =>
+          option
+            .setName("id")
+            .setDescription("The id of the quote to display")
+            .setRequired(true)
+        )
+    )
+    .addSubcommand((subcommand) =>
       subcommand.setName("random").setDescription("Receive a random quote!")
     )
     .addSubcommand((subcommand) =>
@@ -138,63 +150,85 @@ module.exports = {
       case "view":
         await interaction.deferReply();
 
-        const mpeQuery = `SELECT mpe FROM quoteMPEs WHERE serverId=${interaction.guildId}`;
-        bot.database.query(mpeQuery, async function (err, results) {
-          if (err) return console.error(err.stack);
+        const mpeQuery = `SELECT mpe FROM quoteMPEs WHERE serverId=?`;
+        bot.database.query(
+          mpeQuery,
+          [interaction.guildId],
+          async function (err, results) {
+            if (err) return console.error(err.stack);
 
-          let mpe = null;
+            let mpe = null;
 
-          if (!results.length) {
-            mpe = await buildMPE(bot, interaction.guildId);
-          } else {
-            mpe = JSON.parse(results[0]["mpe"]);
+            if (!results.length) {
+              mpe = await buildMPE(bot, interaction.guildId);
+            } else {
+              mpe = JSON.parse(results[0]["mpe"]);
 
-            if (!(await validateMPE(bot, interaction.guildId, mpe))) {
-              mpe = await rebuildMPE(bot, interaction.guildId);
+              if (!(await validateMPE(bot, interaction.guildId, mpe))) {
+                mpe = await rebuildMPE(bot, interaction.guildId);
+              }
             }
-          }
 
-          const embed = utils.getDefaultMessageEmbed(bot, {
-            title: `Quotes Page [1/${mpe["num_pages"]}]`,
-          });
-          mpe[`page_1`].forEach((x) => {
-            embed.addFields({
-              name: `#${x["quoteId"]}`,
-              value: `${x["quote"]}`,
+            const embed = utils.getDefaultMessageEmbed(bot, {
+              title: `Quotes Page [1/${mpe["num_pages"]}]`,
             });
+            mpe[`page_1`].forEach((x) => {
+              embed.addFields({
+                name: `#${x["quoteId"]}`,
+                value: `${x["quote"]}`,
+              });
+            });
+
+            const row = new ActionRowBuilder().addComponents(
+              new ButtonBuilder()
+                .setCustomId("quotePrevPage")
+                .setLabel("Previous Page")
+                .setStyle(ButtonStyle.Primary),
+              new ButtonBuilder()
+                .setCustomId("quoteNextPage")
+                .setLabel("Next Page")
+                .setStyle(ButtonStyle.Primary),
+              new ButtonBuilder()
+                .setCustomId("quoteDeleteEmbed")
+                .setLabel("Delete")
+                .setStyle(ButtonStyle.Danger)
+            );
+
+            interaction.editReply({ embeds: [embed], components: [row] });
+          }
+        );
+        break;
+      case "get":
+        const getQuoteId = interaction.options.getInteger("id");
+        const [getQuery, getArgs] = [
+          "SELECT quoteId, quote FROM quotes WHERE serverId=? AND quoteId=?",
+          [interaction.guildId, getQuoteId],
+        ];
+        bot.database.query(getQuery, getArgs, async function (err, result) {
+          const quote = result[0];
+          if (!quote) {
+            const error = new Error(`No quote with ID ${getQuoteId}`);
+            error.interaction = interaction;
+            return utils.raiseError(bot, error);
+          }
+          const embed = utils.getDefaultMessageEmbed(bot).addFields({
+            name: `**Quote #${getQuoteId}**`,
+            value: quote["quote"],
           });
-
-          const row = new ActionRowBuilder().addComponents(
-            new ButtonBuilder()
-              .setCustomId("quotePrevPage")
-              .setLabel("Previous Page")
-              .setStyle(ButtonStyle.Primary),
-            new ButtonBuilder()
-              .setCustomId("quoteNextPage")
-              .setLabel("Next Page")
-              .setStyle(ButtonStyle.Primary),
-            new ButtonBuilder()
-              .setCustomId("quoteDeleteEmbed")
-              .setLabel("Delete")
-              .setStyle(ButtonStyle.Danger)
-          );
-
-          interaction.editReply({ embeds: [embed], components: [row] });
+          interaction.reply({ embeds: [embed] });
         });
         break;
       case "random":
-        const [query, args] = [
+        const [randQuery, randArgs] = [
           "SELECT quoteId, quote FROM quotes WHERE serverId=?",
           [interaction.guildId],
         ];
-        bot.database.query(query, args, async function (err, result) {
+        bot.database.query(randQuery, randArgs, async function (err, result) {
           const rand_quote = new Random().pick(result);
-          const embed = utils
-            .getDefaultMessageEmbed(bot)
-            .addFields({
-              name: `**Quote #${rand_quote["quoteId"]}**`,
-              value: rand_quote["quote"],
-            });
+          const embed = utils.getDefaultMessageEmbed(bot).addFields({
+            name: `**Quote #${rand_quote["quoteId"]}**`,
+            value: rand_quote["quote"],
+          });
           interaction.reply({ embeds: [embed] });
         });
         break;
@@ -205,22 +239,30 @@ module.exports = {
         }
 
         const quote = interaction.options.getString("quote");
-        const maxQuery = `SELECT MAX(quoteId) as maxId FROM quotes WHERE serverId=${interaction.guildId}`;
-        bot.database.query(maxQuery, function (err, results) {
-          const quoteId = results[0]["maxId"] + 1;
+        const maxQuery = `SELECT MAX(quoteId) as maxId FROM quotes WHERE serverId=?`;
+        bot.database.query(
+          maxQuery,
+          [interaction.guildId],
+          function (err, results) {
+            const quoteId = results[0]["maxId"] + 1;
 
-          const query = `INSERT INTO quotes (serverId, quoteId, quote) VALUES (${interaction.guildId}, ${quoteId}, ? )`;
-          bot.database.query(query, [quote], function (err, results) {
-            if (err) return utils.raiseError(bot, err);
+            const query = `INSERT INTO quotes (serverId, quoteId, quote) VALUES (?, ?, ? )`;
+            bot.database.query(
+              query,
+              [interaction.guildId, quoteId, quote],
+              function (err, results) {
+                if (err) return utils.raiseError(bot, err);
 
-            const embed = utils.getDefaultMessageEmbed(bot, {
-              title: `Quote Added`,
-              description: `**#${quoteId}:** ${quote}`,
-            });
+                const embed = utils.getDefaultMessageEmbed(bot, {
+                  title: `Quote Added`,
+                  description: `**#${quoteId}:** ${quote}`,
+                });
 
-            interaction.reply({ embeds: [embed] });
-          });
-        });
+                interaction.reply({ embeds: [embed] });
+              }
+            );
+          }
+        );
         break;
     }
   },

@@ -35,11 +35,7 @@ module.exports = {
 
     if (target.id === "389919560607858688") {
       // Noah
-      date = Date();
-      date.setDate(20);
-      date.setMonth(6);
-      date.setFullYear(2020);
-      joined = Date(2020, 7, 20);
+      joined = new Date(2020, 7, 20);
     }
 
     const embed = utils

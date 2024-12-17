@@ -43,6 +43,7 @@ module.exports = {
       // let startTime = new Date();
       let preQuery, postQuery;
       let command = bot.slashCommands.get(cmd);
+
       if (command) {
         // Checks if there are permissions set in the database
         // If there are no roles, nor member, perms set, then allow the command to be ran
@@ -82,9 +83,7 @@ module.exports = {
               content: `You cannot run the \`${cmd}\` command.`,
               ephemeral: true,
             })
-            .then((msg) => {
-              setTimeout(() => msg.delete(), 5000);
-            });
+            .then(utils.deleteNoError(5 * 1000));
         }
       }
       // let endTime = new Date();

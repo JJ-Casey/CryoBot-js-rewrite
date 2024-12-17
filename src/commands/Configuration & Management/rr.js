@@ -8,6 +8,7 @@ const {
   TextInputStyle,
   ButtonStyle,
   SlashCommandBuilder,
+  PermissionFlagsBits,
   formatEmoji,
   hyperlink,
 } = require("discord.js");
@@ -59,7 +60,7 @@ async function createReactionEmbed(bot, group, serverId) {
 
 module.exports = {
   name: "rr",
-  hidden: true,
+  hidden: false,
   permissions: [perms.checkIsOwner()],
   usage: "rr (subcommand) (options)",
   description: "Reaction Role Stuff",
@@ -164,7 +165,8 @@ module.exports = {
               "The link of the message to be set as the reaction message"
             )
         )
-    ),
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
   /**
    * @param {Bot} bot
@@ -458,11 +460,9 @@ module.exports = {
                 "The link you provided isn't a valid link to a message on this server!",
             });
             embed.setImage(null);
-            interaction.editReply({ embeds: [embed] }).then(() => {
-              setTimeout(() => {
-                resp.delete();
-              }, 10 * 1000);
-            });
+            interaction
+              .editReply({ embeds: [embed] })
+              .then(utils.deleteNoError(10 * 1000));
             return;
           }
         }
@@ -480,14 +480,17 @@ module.exports = {
               });
               resp.setDescription("Is this the correct message? **(yes/no)**");
               resp.addFields(
-                { name: `Channel`, value: channel.toString() },
+                {
+                  name: `Channel`,
+                  value: channel.toString(),
+                },
                 {
                   name: `Link to Message`,
                   value: hyperlink("Go to message", messageURL),
                 },
                 {
                   name: `Message Content`,
-                  value: message.content ?? "Message is empty",
+                  value: message.content || "Message is empty",
                 }
               );
               interaction.editReply({ embeds: [resp] });
@@ -542,6 +545,7 @@ module.exports = {
                             );
                           }
                         );
+
                         interaction
                           .editReply({
                             embeds: [
@@ -562,6 +566,8 @@ module.exports = {
                               groupName,
                               interaction.guildId
                             ).then((result) => {
+                              message.edit({ embeds: [result[0]] });
+
                               promises = [];
                               result[1].forEach((reacc) =>
                                 promises.push(
@@ -597,12 +603,10 @@ module.exports = {
                   }),
                 ],
               })
-              .then((m) => {
-                setTimeout(() => {
-                  m.delete();
-                }, 10 * 1000);
-              });
+              .then(utils.deleteNoError(10 * 1000));
           });
+        break;
+      case "update":
         break;
     }
   },

@@ -9,7 +9,7 @@ module.exports = {
    * @param {Message} message
    */
   callback: async (bot, message) => {
-    if (message.author == bot) return;
+    if (message.author.bot) return;
 
     const cReactionKEY = await new Promise((resolve) => {
       bot.database.query(

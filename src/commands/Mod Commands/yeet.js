@@ -62,7 +62,7 @@ module.exports = {
     }
 
     // kick
-    // await interaction.guild.members.kick(target);
+    await interaction.guild.members.kick(target);
 
     const responseEmbed = utils.getDefaultMessageEmbed(bot, {
       title: "",

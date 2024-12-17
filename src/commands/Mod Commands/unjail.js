@@ -37,7 +37,8 @@ module.exports = {
 
     var target = interaction.options.getUser("target");
     interaction.guild.members.fetch(target.id).then((member) => {
-      member.roles.remove("734397664833175642");
+      member.roles.remove("812742522194493440");
+      member.roles.remove("813938638709719050");
 
       const embed = utils
         .getDefaultMessageEmbed(bot, {

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@lmstudio/sdk": "^0.1.0",
     "ascii-table": "^0.0.9",
     "axios": "^1.7.2",
     "beautify": "^0.0.8",

@@ -44,9 +44,7 @@ module.exports = {
           .setDescription(`${err}`)
           .addFields({ name: "Query", value: `Parsed query: ${query}` });
 
-        return interaction.reply({ embeds: [embed] }).then((msg) => {
-          setTimeout(() => msg.delete(), 5000);
-        });
+        return interaction.reply({ embeds: [embed] }).then(utils.deleteNoError(5 * 1000));
       }
 
       const embed = utils
