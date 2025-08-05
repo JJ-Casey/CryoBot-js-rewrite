@@ -7,7 +7,7 @@ module.exports = {
     usage: 'ignite [member]',
     hidden: false,
     permissions: [],
-    description: 'Displays when a member joined',
+    description: 'Ignites another member',
     category: 'League Commands',
     
     /** 

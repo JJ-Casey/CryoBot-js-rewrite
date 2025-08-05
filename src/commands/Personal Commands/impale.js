@@ -21,10 +21,7 @@ module.exports = {
     .setName("impale")
     .setDescription("Sends someone to the shadow realm")
     .addUserOption((option) =>
-      option
-        .setName("target")
-        .setDescription("The poor soul being impaled")
-        .setRequired(true)
+      option.setName("target").setDescription("The poor soul being impaled")
     )
     .addStringOption((option) =>
       option.setName("reason").setDescription("The reason for their impalement")
@@ -52,10 +49,20 @@ module.exports = {
       return interaction.reply({ embeds: [responseEmbed], ephemeral: true });
     }
 
-    const target = interaction.options.getUser("target");
+    const target = interaction.options.getUser("target") ?? -69;
     const reason =
       interaction.options.getString("reason") ??
       "Mitzy was too hungry to give a reason...";
+
+    if (target === -69) {
+      const responseEmbed = utils.getDefaultMessageEmbed(bot, {
+        title: "Beware",
+        description:
+          "<:MitSee:1360330858657218842> Mitzy is readying his spear <:MitSee:1360330858657218842>",
+        color: colors.FireBrick,
+      });
+      return interaction.reply({ embeds: [responseEmbed] });
+    }
 
     if (target.id == interaction.member.id) {
       const responseEmbed = utils.getDefaultMessageEmbed(bot, {

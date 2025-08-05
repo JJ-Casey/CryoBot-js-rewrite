@@ -179,7 +179,7 @@ module.exports = {
                                     })
                                     .setURL(vod_link)
                                     .setImage(
-                                      "https://media1.tenor.com/m/MKYpkoDZyHwAAAAd/spongebob-stream-what-am-i-supposed-to-do.gif"
+                                      "https://c.tenor.com/MKYpkoDZyHwAAAAd/tenor.gif"
                                     ),
                                 ],
                               });

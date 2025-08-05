@@ -7,15 +7,6 @@ const fs = require("fs");
 const prob_grr = 0.05;
 const prob_timeout = 0.005;
 
-const responses = [
-  "You diddily ding dong done fucked up by mentioning me in your riddly-reply or message! You diddily ding dong done gone got yourself a riddly-random timeout!",
-  "Yousa done fucked tup by mentionen mesa in yous replyen or message! yousa done gone got yourself a random timeout!",
-  "You have ponged your last ping!",
-  "Fucked up by mentioning me in your reply or message you have! Gone got yourself a random timeout you have!",
-  "You are a do fucked upon by mentioning my on yours reply or message! you are a do go keep yourself that random timeout!",
-  "You donye fucked up by mentionying me in youw wepwy ow (・`ω´・) message!!11 You donye gonye got youwsewf *notices buldge* a wandom timeout?!!",
-];
-
 const rebeccaYes = "<:rebeccayes:1296261178712129567>";
 const rebeccaNo = "<:rebeccano:1296261177206112256>";
 const thinkge = "<a:thinkge:1300514927467040788>";
@@ -149,27 +140,21 @@ module.exports = {
       });
       return;
     } else {
-      const runi = Math.random();
-
-      fs.appendFile("./uniform_values.txt", `${runi.toString()}\n`, (err) => {
-        if (err) {
-          console.error(err);
-        }
-      });
-
-      if (runi < prob_timeout) {
-        if (message.author.id != ownerID) {
-          const member = message.guild.members.cache.get(message.author.id);
-          try {
-            await message.reply(
-              `<a:timeout:1285954712415502388> ${rng.pick(
-                responses
-              )} <a:timeout:1285954712415502388>`
-            );
-            await member.timeout(69 * 1000, "Random CBT Mention");
-          } catch (e) {}
-        }
-      } else if (runi < prob_grr) {
+      // if (runi < prob_timeout) {
+      //   if (message.author.id != ownerID) {
+      //     const member = message.guild.members.cache.get(message.author.id);
+      //     try {
+      //       await message.reply(
+      //         `<a:timeout:1285954712415502388> ${rng.pick(
+      //           responses
+      //         )} <a:timeout:1285954712415502388>`
+      //       );
+      //       await member.timeout(69 * 1000, "Random CBT Mention");
+      //     } catch (e) {}
+      //   }
+      // }
+      // else
+       if (runi < prob_grr) {
         await message.reply("<:grrrr:1285221952428179487>");
       }
     }

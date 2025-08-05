@@ -1,3 +1,8 @@
 /.env
 /config.json
 /node_modules
+/package-lock.json
+/run.bat
+/init_db.js
+/src/utils/pebbleAPI.js
+/src/test/default_command.js
